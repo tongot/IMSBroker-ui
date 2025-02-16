@@ -32,7 +32,7 @@ export default function MasterTableToolbar(props: EnhancedTableToolbarProps) {
             },
         ]}
       >
-        {canSelectMultiple && (
+        {canSelectMultiple ? (
           <>
             {numSelected > 0 ? (
               <Typography
@@ -69,7 +69,14 @@ export default function MasterTableToolbar(props: EnhancedTableToolbarProps) {
               </Tooltip>
             )}
           </>
-        )}
+        ):<Typography
+        sx={{ flex: "1 1 100%" }}
+        variant="h6"
+        id="tableTitle"
+        component="div"
+      >
+        {tableHeading}
+      </Typography>}
       </Toolbar>
       {children && (
         <Toolbar

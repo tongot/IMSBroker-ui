@@ -1,5 +1,5 @@
 "use client";
-import { Box, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import React from "react";
 import AddressInputButton from "./AddressInputButton";
 import FolderList from "../list/FolderList";
@@ -23,7 +23,7 @@ const Address = ({ entityId, entityType }: AddressProps) => {
     if (entityId > 0) {
       getAddressFromDb(entityId, entityType);
     }
-  }, []);
+  }, [entityId, entityType, getAddressFromDb]);
 
   const getAddressType = (id: number) =>
     AddressType.find((item) => item.value === id)?.member;
@@ -43,6 +43,7 @@ const Address = ({ entityId, entityType }: AddressProps) => {
         </Typography>
         <AddressInputButton entityId={entityId} entityType={entityType} />
       </Box>
+      <Divider/>
       {loadingAddresses && <p>Loading...</p>}
       {storeAddress.length > 0 && (
         <FolderList

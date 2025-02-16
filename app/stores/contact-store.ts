@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import IAddContact from "../interfaces/contact-information/contact";
 import IAddAddress from "../interfaces/contact-information/address";
-import GET from "../http/GET";
+import {GET} from "../http/GET";
 import POST from "../http/POST";
 import IHttpResponse from "../http/http-response";
 
@@ -64,7 +64,7 @@ export const useContactStore = create<ContactsStore>((set, get) => ({
     }
   },
 
-  addContactList: (contact) => set((state) => ({ contacts: contact })),
+  addContactList: (contact) => set(() => ({ contacts: contact })),
   removeContact: async (index) => {
     const url = `/contacts/${get().contacts[index].id}/contact-delete`;
     const deleteContact: IHttpResponse<string> = await POST({ url: url });
@@ -129,7 +129,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
     }
   },
 
-  addAddressList: (address) => set((state) => ({ addresses: address })),
+  addAddressList: (address) => set(() => ({ addresses: address })),
 
   removeAddress: async (index) =>{
     const url = `/contacts/${get().addresses[index].id}/address-delete`;

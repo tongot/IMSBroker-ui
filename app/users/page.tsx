@@ -3,7 +3,7 @@ import React from "react";
 import MainContainer from "../components/MainContainer";
 import AccountCircleRound from "@mui/icons-material/AccountCircleRounded";
 import { useQuery } from "@tanstack/react-query";
-import GET from "../http/GET";
+import { GET } from "../http/GET";
 import IUser from "../interfaces/users/user";
 import IHeadCell from "../interfaces/head-cell";
 import MasterTable from "../components/table/MasterTable";

@@ -1,5 +1,5 @@
 "use client";
-import { Box, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import React from "react";
 import FolderList from "../list/FolderList";
 import { useContactStore } from "@/app/stores/contact-store";
@@ -22,7 +22,7 @@ const Address = ({ entityId, entityType }: ContactsProps) => {
     if (entityId > 0) {
       getContactsFromDb(entityId, entityType);
     }
-  }, []);
+  }, [entityId, entityType, getContactsFromDb]);
 
   return (
     <Box
@@ -39,6 +39,7 @@ const Address = ({ entityId, entityType }: ContactsProps) => {
         </Typography>
         <ContactInputButton entityId={entityId} entityType={entityType} />
       </Box>
+      <Divider/>
       {loadingContacts && <p>Loading...</p>}
       {storeContacts.length > 0 && (
         <FolderList

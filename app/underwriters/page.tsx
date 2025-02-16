@@ -2,7 +2,7 @@
 import React from "react";
 import MainContainer from "../components/MainContainer";
 import { useQuery } from "@tanstack/react-query";
-import GET from "../http/GET";
+import {GET} from "../http/GET";
 import IHeadCell from "../interfaces/head-cell";
 import MasterTable from "../components/table/MasterTable";
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';

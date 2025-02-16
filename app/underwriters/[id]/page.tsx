@@ -1,9 +1,9 @@
 'use client'
-import GET from '@/app/http/GET';
+import {GET} from '@/app/http/GET';
 import IAddUnderwriter from '@/app/interfaces/underwriters/underwriter-add';
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react'
-import NewUnderwriterPage from '../new/page';
+import AddUnderwriterForm from '../underwriter-components/AddUnderwriterForm';
 
 const EditUnderwriter = ({ params }: { params: Promise<{ id: string }> }) => {
 
@@ -20,12 +20,11 @@ const EditUnderwriter = ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (data) {
     children = (
-      <NewUnderwriterPage editUnderwriter={data}/>
+      <AddUnderwriterForm editUnderwriter={data}/>
     );
   }
   return (
     <div>
-      
       {children}
     </div>
   )

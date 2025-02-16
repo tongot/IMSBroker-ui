@@ -19,6 +19,7 @@ interface EnhancedTableProps {
   rowCount: number;
   canSelectMultiple: boolean;
   headCells: readonly IHeadCell[];
+  hasActions: boolean
 }
 
 export default function MasterTableHeader(
@@ -33,6 +34,7 @@ export default function MasterTableHeader(
     onRequestSort,
     headCells,
     canSelectMultiple,
+    hasActions
   } = props;
   const createSortHandler =
     (property: string) => (event: React.MouseEvent<unknown>) => {
@@ -82,7 +84,7 @@ export default function MasterTableHeader(
             </TableCell>
           </>
         ))}
-        <TableCell>Actions</TableCell>
+       {hasActions && <TableCell>Actions</TableCell>}
       </TableRow>
     </TableHead>
   );

@@ -1,10 +1,10 @@
  class Enums{
-    constructor( number: string, value: number) {
+    constructor( number: string, value: number| string) {
         this.member = number;
         this.value = value
     }
     member: string = '';
-    value: number = 0
+    value: number | string = 0
 }
 
 const AddressType = [
@@ -17,4 +17,14 @@ const UnderwriterStatus = [
   new Enums('Inactive', 1),
 ];
 
-export { AddressType, UnderwriterStatus };
+const FieldTypes = [
+  new Enums('Text','text'),
+  new Enums('Date','date'),
+  new Enums('Expanded Text','expanded-text'),
+  new Enums('Number','number'),
+  new Enums('Options','options'),
+  new Enums('Bool','bool'),
+
+]
+
+export { AddressType, UnderwriterStatus, FieldTypes };

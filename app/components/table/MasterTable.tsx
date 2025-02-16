@@ -45,26 +45,30 @@ function getComparator<Key extends keyof any>(
 }
 interface MasterTableProps<T extends IEntity> {
   canSelectMultiple: boolean;
-  toolBar?: React.ReactNode;
+  children?: React.ReactNode;
   headCells: IHeadCell[];
   data: T[];
   sortBy: string;
   tableHeading: string;
   addNewLink: string;
   editFn?: (id: number) => void;
+  deleteFn?: (id: number) => void;
+  viewFn?: (id: number) => void;
 }
 export default function MasterTable<T extends IEntity>(
   props: MasterTableProps<T>
 ) {
   const {
     canSelectMultiple,
-    toolBar,
+    children,
     headCells,
     data,
     sortBy,
     tableHeading,
     addNewLink,
     editFn,
+    deleteFn,
+    viewFn,
   } = props;
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<string>(sortBy);
@@ -147,7 +151,7 @@ export default function MasterTable<T extends IEntity>(
           tableHeading={tableHeading}
           addNewUrl={addNewLink}
         >
-          {toolBar}
+          {children}
         </MasterTableToolbar>
         <TableContainer>
           <Table aria-labelledby="tableTitle" size={dense ? "small" : "medium"}>
@@ -160,6 +164,7 @@ export default function MasterTable<T extends IEntity>(
               rowCount={rows}
               headCells={headCells}
               canSelectMultiple={canSelectMultiple}
+              hasActions={(viewFn !== undefined || editFn !== undefined || deleteFn !== undefined)}
             />
 
             <TableBody>
@@ -204,12 +209,16 @@ export default function MasterTable<T extends IEntity>(
                           <EditIcon />
                         </IconButton>
                       )}
-                      <IconButton>
-                        <DeleteIcon />
-                      </IconButton>
-                      <IconButton>
-                        <RemoveRedEyeIcon />
-                      </IconButton>
+                      {deleteFn && (
+                        <IconButton>
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                      {viewFn && (
+                        <IconButton>
+                          <RemoveRedEyeIcon />
+                        </IconButton>
+                      )}
                     </TableCell>
                   </TableRow>
                 );

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5091/api";
 
-export default async function GET<T>(url: string): Promise<T> {
+export async function GET<T>(url: string): Promise<T> {
   try {
     const token = localStorage.getItem("token");
 
@@ -21,3 +21,6 @@ export default async function GET<T>(url: string): Promise<T> {
     return null as T;
   }
 }
+
+
+

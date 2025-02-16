@@ -19,7 +19,7 @@ const MenuListItems: React.FC<MenuListItemsProps> = ({ open, routes }) => {
   const router = useRouter();
   return (
     <List>
-      {routes.map((route, index) => (
+      {routes.map((route) => (
         <ListItem key={route.name} disablePadding sx={{ display: "block" }}>
           <ListItemButton
             sx={[
