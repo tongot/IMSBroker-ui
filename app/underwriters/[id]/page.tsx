@@ -1,9 +1,12 @@
 'use client'
-import {GET} from '@/app/http/GET';
-import IAddUnderwriter from '@/app/interfaces/underwriters/underwriter-add';
+import { GET } from "@/app/utils/http/GET";
+import IAddUnderwriter from "@/app/utils/interfaces/underwriters/underwriter-add";
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react'
 import AddUnderwriterForm from '../underwriter-components/AddUnderwriterForm';
+import MainContainer from "@/app/components/MainContainer";
+import EditIcon from '@mui/icons-material/Edit'
+
 
 const EditUnderwriter = ({ params }: { params: Promise<{ id: string }> }) => {
 
@@ -25,7 +28,9 @@ const EditUnderwriter = ({ params }: { params: Promise<{ id: string }> }) => {
   }
   return (
     <div>
-      {children}
+      <MainContainer icon={<EditIcon/>} heading="Underwriter">
+          {children}
+      </MainContainer>
     </div>
   )
 }

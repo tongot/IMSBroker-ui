@@ -4,7 +4,6 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   TextField,
 } from "@mui/material";
@@ -15,14 +14,14 @@ import FormContainer from "@/app/components/FormContainer";
 import { useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid2";
 import { useMutation } from "@tanstack/react-query";
-import POST from "@/app/http/POST";
+import POST from "@/app/utils/http/POST";
 import { queryClient } from "@/app/components/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import Address from "@/app/components/shared/Address";
 import Contact from "@/app/components/shared/Contact";
-import { UnderwriterStatus } from "@/app/interfaces/enums";
+import { UnderwriterStatus } from "@/app/utils/interfaces/enums";
 import UnderwriterIns from "../underwriter-components/UnderwriterIns";
-import IAddUnderwriter from "@/app/interfaces/underwriters/underwriter-add";
+import IAddUnderwriter from "@/app/utils/interfaces/underwriters/underwriter-add";
 
 interface AddUnderwriterFormProps {
   editUnderwriter?: IAddUnderwriter;
@@ -40,7 +39,7 @@ const AddUnderwriterForm: React.FC<AddUnderwriterFormProps> = ({
   } = useForm({ mode: "onChange" });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: IAddUnderwriter) => POST(data),
+    mutationFn: (data: IAddUnderwriter) => POST(data, data.url),
 
     onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["underwriters"] });
@@ -61,10 +60,7 @@ const AddUnderwriterForm: React.FC<AddUnderwriterFormProps> = ({
   });
 
   const handleSubmitUnderwriter = (name: string, status: string) => {
-    console.log(name, status);
     const statusValue = Number(status);
-
-    console.log(name, statusValue);
     if (editUnderwriter) {
       mutate({
         id: editUnderwriter.id,
@@ -137,7 +133,6 @@ const AddUnderwriterForm: React.FC<AddUnderwriterFormProps> = ({
 
   return (
     <div>
-      <Paper sx={{ padding: 3 }}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 12, md: 4 }}>
               <FormContainer
@@ -159,17 +154,13 @@ const AddUnderwriterForm: React.FC<AddUnderwriterFormProps> = ({
           </Grid>
           {editUnderwriter && (
             <Grid size={{ xs: 12, sm: 12, md: 8 }}>
-              <Paper sx={{ padding: 3 }}>
                 <UnderwriterIns underwriterId={editUnderwriter.id || 0} />
-              </Paper>
             </Grid>
           )}
         </Grid>
-      </Paper>
 
       {editUnderwriter && (
         <Box sx={{ mt: 4 }}>
-          <Paper sx={{ padding: 5 }}>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 12, md: 6 }}>
                 <Contact
@@ -184,7 +175,6 @@ const AddUnderwriterForm: React.FC<AddUnderwriterFormProps> = ({
                 />
               </Grid>
             </Grid>
-          </Paper>
         </Box>
       )}
     </div>

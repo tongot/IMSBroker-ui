@@ -75,7 +75,7 @@ const PrimarySearchAppBar: React.FC<SearchAppBarProps> = ({
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <Toolbar>
-          <IconButton
+          {session?.user?.name && <IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -85,6 +85,7 @@ const PrimarySearchAppBar: React.FC<SearchAppBarProps> = ({
           >
             <MenuIcon />
           </IconButton>
+          }
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Brokers IMS
           </Typography>

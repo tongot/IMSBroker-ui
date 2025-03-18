@@ -1,18 +1,32 @@
 "use client";
 import { useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import LockIcon from "@mui/icons-material/Lock";
+import { signIn, signOut } from "next-auth/react";
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography,
+  CircularProgress,
+  Avatar,
+  CssBaseline,
+  Grid,
+  Link,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const url = process.env.REACT_APP_API_URL || "http://localhost:5091/api";
 const localUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const router = useRouter();
 
   if (typeof window !== "undefined") {
     if (localStorage.getItem("token") == "token") {
@@ -26,9 +40,10 @@ export default function LoginPage() {
 
     if (username === "" || password === "") {
       setError("Please fill in all fields");
+      setLoginLoading(false);
     } else {
       try {
-        console.log(process.env.REACT_APP_API_URL);
+        setLoginLoading(true);
         const apiRes = await axios.post(`${url}/User/token`, {
           username,
           password,
@@ -43,84 +58,105 @@ export default function LoginPage() {
           });
           if (res?.error) {
             setError(res.error);
+          } else {
+            router.push("/dashboard");
           }
         }
-      } catch (e:unknown) {
+        setLoginLoading(false);
+      } catch (e: unknown) {
         if (axios.isAxiosError(e)) {
           setError(e.response?.data.message);
         }
+        setLoginLoading(false);
       }
     }
   };
 
   return (
-    <div>
-      {status === "loading" ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {session ? (
-            <div>
-              <p>Logged in as: {session.user?.name}</p>
-              <button onClick={() => signOut()}>Logout</button>
-            </div>
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "100px",
-                width: "100%",
-              }}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
+      <CssBaseline />
+      <Paper
+        elevation={3}
+        sx={{
+          padding: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          maxWidth: 400,
+          width: "100%",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleLogin}
+          sx={{ mt: 1, width: "100%" }}
+        >
+          {error && (
+            <Typography
+              color="error"
+              variant="body2"
+              align="center"
+              sx={{ mb: 2 }}
             >
-              <Paper elevation={3} style={{ padding: "20px" }}>
-                <Box textAlign="center" marginBottom="20px">
-                  <Typography variant="h4">Login</Typography>
-                </Box>
-                {error && (
-                  <Box marginBottom="10px">
-                    <Typography color="error" variant="body2">
-                      {error}
-                    </Typography>
-                  </Box>
-                )}
-                <form onSubmit={handleLogin}>
-                  <TextField
-                    label="Username"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                  />
-                  <TextField
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    style={{ marginTop: "20px" }}
-                    startIcon={<LockIcon />}
-                  >
-                    Login
-                  </Button>
-                </form>
-              </Paper>
-            </Box>
+              {error}
+            </Typography>
           )}
-        </>
-      )}
-    </div>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Username"
+            autoComplete="username"
+            autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loginLoading}
+            startIcon={loginLoading ? <CircularProgress size={20} /> : null}
+          >
+            {loginLoading ? "Signing In..." : "Sign In"}
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="#" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Paper>
+    </Box>
   );
 }

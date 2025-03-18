@@ -1,11 +1,11 @@
 "use client";
 import MasterTable from "@/app/components/table/MasterTable";
-import { GET } from "@/app/http/GET";
-import IHeadCell from "@/app/interfaces/head-cell";
+import { GET } from "@/app/utils/http/GET";
+import IHeadCell from "@/app/utils/interfaces/head-cell";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import IUnderwriterIns from "@/app/interfaces/underwriters/underwriter-ins";
-import IHttpResponse from "@/app/http/http-response";
+import IUnderwriterIns from "@/app/utils/interfaces/underwriters/underwriter-ins";
+import IHttpResponse from "@/app/utils/http/http-response";
 import UnderwriterInsForm from "./UnderwriterInsForm";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
@@ -28,31 +28,31 @@ const UnderwriterIns = ({ underwriterId }: UnderwriterProps) => {
     const headCells: IHeadCell[] = [
       {
         id: "insuranceMainType",
-        numeric: true,
+        type: "text",
         disablePadding: true,
         label: "Insurance Main Type",
       },
       {
         id: "totalCommission",
-        numeric: true,
+        type: "number",
         disablePadding: true,
         label: "Total Commission",
       },
       {
         id: "commission",
-        numeric: true,
+        type: "number",
         disablePadding: true,
         label: "Commission",
       },
       {
         id: "vat",
-        numeric: true,
+        type: "number",
         disablePadding: true,
         label: "VAT",
       },
       {
         id: "options",
-        numeric: true,
+        type: "component",
         disablePadding: true,
         label: "Options",
       },
@@ -67,15 +67,24 @@ const UnderwriterIns = ({ underwriterId }: UnderwriterProps) => {
             ...x,
             options: (
               <>
-                <Box sx={{ display: "flex", flexGap: "2px", justifyContent:"end", alignItems:"center"}}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexGap: "2px",
+                    justifyContent: "end",
+                    alignItems: "center",
+                  }}
+                >
                   <UnderwriterInsForm
                     underwriterId={underwriterId}
                     editInsType={x}
                   />
-                  <Link href={`/underwriters/${underwriterId}/config-cover/${x.id}`}> 
-                      <Button variant="outlined" size="small">
-                        add cover
-                      </Button>
+                  <Link
+                    href={`/underwriters/${underwriterId}/config-cover/${x.id}`}
+                  >
+                    <Button variant="outlined" size="small">
+                      add cover
+                    </Button>
                   </Link>
                 </Box>
               </>

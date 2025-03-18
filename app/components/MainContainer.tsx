@@ -1,36 +1,51 @@
 "use client";
 import { Box, Divider, Paper, Typography } from "@mui/material";
 import React from "react";
+import { alpha } from "@mui/material/styles";
 
 interface MainContainerProps {
   children: React.ReactNode;
   heading: string;
   icon: React.ReactNode;
 }
+
 const MainContainer: React.FC<MainContainerProps> = ({
   children,
   icon,
   heading,
 }) => {
   return (
-    <Box>
-      <Paper>
+    <Box sx={{ width: "100%" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          borderRadius: 2,
+          overflow: "hidden",
+          backgroundColor: "background.default",
+        }}
+      >
+        {/* Header Section */}
         <Box
           sx={{
-            padding: "10px",
+            p: 2,
             display: "flex",
-            alignContent: "center",
-            justifyContent: "start",
-            gap: "5px",
+            alignItems: "center",
+            gap: 1,
+            background: (theme) => alpha(theme.palette.primary.main, 0.1),
+            color: "primary.secondary",
           }}
         >
           {icon}
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h6" component="h1" fontWeight="bold">
             {heading}
           </Typography>
         </Box>
+
+        {/* Divider */}
         <Divider />
-        <Box sx={{padding:"7px"}}>{children}</Box>
+
+        {/* Content Section */}
+        <Box sx={{ p: 3 }}>{children}</Box>
       </Paper>
     </Box>
   );

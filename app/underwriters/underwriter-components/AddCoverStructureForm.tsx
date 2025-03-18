@@ -13,11 +13,11 @@ import { useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { useMutation } from "@tanstack/react-query";
-import POST from "@/app/http/POST";
 import { queryClient } from "@/app/components/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
-import IHttpResponse from "@/app/http/http-response";
-import ICoverStructure from "@/app/interfaces/cover-structure/cover-structure";
+import ICoverStructure from "@/app/utils/interfaces/cover-structure/cover-structure";
+import IHttpResponse from "@/app/utils/http/http-response";
+import POST from "@/app/utils/http/POST";
 
 interface AddCoverStructureFormProps {
   editStructure?: ICoverStructure;
@@ -41,7 +41,7 @@ const AddCoverStructureForm = ({
   const dialog = useFormDialogContainer();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: ICoverStructure) => POST(data),
+    mutationFn: (data: ICoverStructure) => POST(data, data.url),
 
     onSuccess: (data: IHttpResponse<ICoverStructure>) => {
       queryClient.invalidateQueries({ queryKey: ["underwriters-covers"+insTypeId] });
@@ -87,14 +87,15 @@ const AddCoverStructureForm = ({
 
       <TextField
         type="number"
-        {...register("basePremium", {
-          required: "Base Premium is required",
-          min: { value: 0, message: "Base Premium must be greater than 0" },
+        {...register("rate", {
+          required: "Rate is required",
+          min: { value: 0, message: "Rate must be greater than 0" },
+          max: {value: 100, message: "Rate must be below 100%"}
         })}
-        error={!!errors.basePremium}
-        helperText={String(errors.basePremium?.message || "")}
-        label="Base Premium"
-        defaultValue={editStructure?.basePremium}
+        error={!!errors.rate}
+        helperText={String(errors.rate?.message || "")}
+        label="Rate"
+        defaultValue={editStructure?.rate}
       ></TextField>
 
       <TextField
@@ -159,9 +160,10 @@ const AddCoverStructureForm = ({
       })}
 
       <Button
-      variant="outlined"
+      variant="contained"
+        fullWidth
         startIcon={
-        editStructure ? <EditIcon color="success" /> : <AddIcon />
+        editStructure ? <EditIcon/> : <AddIcon />
         }
         onClick={() => {
           dialog.open();

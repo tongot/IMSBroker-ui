@@ -7,84 +7,126 @@ import {
   Paper,
   Tooltip,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
 
 interface FormContainerProps {
-  width: object;
+  width?: object | string; // Allow both object and string for width
   icon: React.ReactNode;
   heading: string;
   children: React.ReactNode;
   closeFn: () => void;
-  action: () => void;
+  action: (e?: React.FormEvent) => void; // Allow optional event parameter
   loading: boolean;
+  btnText?: string;
+  disableSubmit?: boolean; // Add a prop to disable the submit button
 }
+
 const FormContainer: React.FC<FormContainerProps> = ({
-  width,
+  width = { xs: "90%", sm: "70%", md: "50%" }, // Default responsive width
   icon,
   heading,
   children,
   closeFn,
   action,
-  loading
+  loading,
+  btnText,
+  disableSubmit = false, // Default to false
 }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    action(e); // Pass the event to the action function
+  };
+
   return (
-    <form noValidate onSubmit={action}>
-    <Box>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 2,
+      }}
+    >
       <Paper
-        elevation={0}
+        elevation={3}
         sx={{
           width: width,
           display: "flex",
           flexDirection: "column",
           gap: 2,
+          borderRadius: 2,
+          overflow: "hidden",
         }}
       >
+        {/* Header Section */}
         <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
-            alignContent: "center",
             justifyContent: "space-between",
-            gap: "5px",
-            padding: "1rem",
+            alignItems: "center",
+            p: 2,
+            backgroundColor: "primary.main",
+            color: "primary.contrastText",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignContent: "center",
-              justifyContent: "start",
-              gap: "5px",
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {icon}
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h6" component="h4">
               {heading}
             </Typography>
           </Box>
-          <Box>
-            <Tooltip title="Close">
-                <IconButton onClick={closeFn}>
-                  <CloseIcon />
-                </IconButton>
-            </Tooltip>
-          </Box>
+          <Tooltip title="Close">
+            <IconButton
+              onClick={closeFn}
+              sx={{ color: "primary.contrastText" }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
+
+        {/* Divider */}
         <Divider />
-        {children}
+
+        {/* Form Content */}
+        <Box sx={{ p: 3 }}>{children}</Box>
+
+        {/* Divider */}
         <Divider />
-        <Box sx={{ padding: "1rem", display: "flex", justifyContent: "end" }}>
-          <Button loading={loading} onClick={action} variant="contained" startIcon={<SaveIcon />}>
-            Save
+
+        {/* Footer Section */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            p: 2,
+            backgroundColor: "background.paper",
+          }}
+        >
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={loading || disableSubmit}
+            startIcon={
+              loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : btnText ? (
+                icon
+              ) : (
+                <SaveIcon />
+              )
+            }
+            sx={{ minWidth: 120 }}
+          >
+            {loading ? "Saving..." : btnText ? btnText : "Save"}
           </Button>
         </Box>
       </Paper>
     </Box>
-    </form>
   );
 };
 

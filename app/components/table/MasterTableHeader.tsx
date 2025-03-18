@@ -1,15 +1,9 @@
-import IHeadCell from "@/app/interfaces/head-cell";
-import {
-  Box,
-  Checkbox,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-} from "@mui/material";
+import IHeadCell from "@/app/utils/interfaces/head-cell";
+import { Box, Checkbox, TableCell, TableHead, TableRow, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 
 type Order = "asc" | "desc";
+
 interface EnhancedTableProps {
   numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
@@ -19,12 +13,10 @@ interface EnhancedTableProps {
   rowCount: number;
   canSelectMultiple: boolean;
   headCells: readonly IHeadCell[];
-  hasActions: boolean
+  hasActions: boolean;
 }
 
-export default function MasterTableHeader(
-  props: EnhancedTableProps
-) {
+export default function MasterTableHeader(props: EnhancedTableProps) {
   const {
     onSelectAllClick,
     order,
@@ -34,16 +26,16 @@ export default function MasterTableHeader(
     onRequestSort,
     headCells,
     canSelectMultiple,
-    hasActions
+    hasActions,
   } = props;
-  const createSortHandler =
-    (property: string) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+
+  const createSortHandler = (property: string) => (event: React.MouseEvent<unknown>) => {
+    onRequestSort(event, property);
+  };
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow sx={{ backgroundColor: "primary.light" }}>
         {canSelectMultiple && (
           <TableCell padding="checkbox">
             <Checkbox
@@ -52,39 +44,35 @@ export default function MasterTableHeader(
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
               inputProps={{
-                "aria-label": "select all desserts",
+                "aria-label": "select all",
               }}
             />
           </TableCell>
         )}
-
         {headCells.map((headCell, index) => (
-          <>
-            <TableCell
-              key={index}
-              align={headCell.numeric ? "right" : "left"}
-              padding={headCell.disablePadding ? "none" : "normal"}
-              sortDirection={orderBy === headCell.id ? order : false}
+          <TableCell
+            key={index}
+            align={headCell.alignment || "left"}
+            width={headCell.width}
+            padding={headCell.disablePadding ? "none" : "normal"}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : "asc"}
+              onClick={createSortHandler(headCell.id)}
+              sx={{ fontWeight: "bold", color: "text.primary" }}
             >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-                sx={{ paddingLeft: "5px" }}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          </>
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
         ))}
-       {hasActions && <TableCell>Actions</TableCell>}
+        {hasActions && <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>}
       </TableRow>
     </TableHead>
   );

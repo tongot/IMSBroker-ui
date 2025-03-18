@@ -17,7 +17,7 @@ const themeOptions: ThemeOptions = {
   },
   palette: {
     background: {
-      default: "#e0e0e0",
+      default: "#f7f7f7",
     },
   },
 };

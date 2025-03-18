@@ -1,11 +1,9 @@
 import * as React from 'react';
 import Accordion from '@mui/material/Accordion';
-import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Button from '@mui/material/Button';
 
 interface CustomAccordionProps{
   children: React.ReactNode;
@@ -22,6 +20,7 @@ export default function CustomAccordion({children, panelId, heading}:CustomAccor
           id={`panelId-${panelId}`}
         >
           <Typography component="span">{heading}</Typography>
+
         </AccordionSummary>
         <AccordionDetails>
           {children}

@@ -5,8 +5,8 @@ import AccountCircleRound from "@mui/icons-material/AccountCircleRounded";
 import FormContainer from "@/app/components/FormContainer";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import POST from "@/app/http/POST";
-import IAddUser from "@/app/interfaces/users/add-user";
+import POST from "@/app/utils/http/POST";
+import IAddUser from "@/app/utils/interfaces/users/add-user";
 import { queryClient } from "@/app/components/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ const NewUserPage = () => {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: IAddUser) => POST(data),
+    mutationFn: (data: IAddUser) => POST(data, data.url),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       notifications.show("User created successfully", {

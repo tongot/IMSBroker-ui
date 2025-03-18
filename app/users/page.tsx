@@ -3,10 +3,10 @@ import React from "react";
 import MainContainer from "../components/MainContainer";
 import AccountCircleRound from "@mui/icons-material/AccountCircleRounded";
 import { useQuery } from "@tanstack/react-query";
-import { GET } from "../http/GET";
-import IUser from "../interfaces/users/user";
-import IHeadCell from "../interfaces/head-cell";
 import MasterTable from "../components/table/MasterTable";
+import IUser from "../utils/interfaces/users/user";
+import { GET } from "../utils/http/GET";
+import IHeadCell from "../utils/interfaces/head-cell";
 
 const UsersPage = () => {
   const { data, isLoading, error } = useQuery({
@@ -20,13 +20,13 @@ const UsersPage = () => {
     const headCells: IHeadCell[] = [
       {
         id: "userName",
-        numeric: false,
+        type: "text",
         disablePadding: true,
         label: "Username",
       },
       {
         id: "email",
-        numeric: true,
+        type: "text",
         disablePadding: false,
         label: "Email",
       },

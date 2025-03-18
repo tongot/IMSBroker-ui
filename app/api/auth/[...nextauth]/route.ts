@@ -12,7 +12,6 @@ const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("hit");
         try {
           const userGet = await axios.post(
             "http://localhost:5091/api/User/token",

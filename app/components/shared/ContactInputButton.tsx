@@ -3,10 +3,10 @@ import React from "react";
 import useFormDialogContainer from "../FormDialogContainer";
 import { useForm } from "react-hook-form";
 import { Box, IconButton, TextField } from "@mui/material";
-import IAddContact from "@/app/interfaces/contact-information/contact";
 import { useContactStore } from "@/app/stores/contact-store";
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
+import IAddContact from "@/app/utils/interfaces/contact-information/contact";
 
 interface ContactInputButtonProps {
   editContact?:IAddContact;

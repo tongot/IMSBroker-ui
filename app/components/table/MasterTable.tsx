@@ -14,11 +14,12 @@ import Switch from "@mui/material/Switch";
 import MasterTableHeader from "./MasterTableHeader";
 import MasterTableToolbar from "./MasterTableToolBar";
 import { IconButton } from "@mui/material";
-import IHeadCell from "@/app/interfaces/head-cell";
-import IEntity from "@/app/interfaces/ientity";
+import IHeadCell from "@/app/utils/interfaces/head-cell";
+import IEntity from "@/app/utils/interfaces/ientity";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import dayjs from "dayjs";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -43,6 +44,7 @@ function getComparator<Key extends keyof any>(
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
+
 interface MasterTableProps<T extends IEntity> {
   canSelectMultiple: boolean;
   children?: React.ReactNode;
@@ -54,10 +56,10 @@ interface MasterTableProps<T extends IEntity> {
   editFn?: (id: number) => void;
   deleteFn?: (id: number) => void;
   viewFn?: (id: number) => void;
+  addBtn?: React.ReactNode;
 }
-export default function MasterTable<T extends IEntity>(
-  props: MasterTableProps<T>
-) {
+
+export default function MasterTable<T extends IEntity>(props: MasterTableProps<T>) {
   const {
     canSelectMultiple,
     children,
@@ -69,7 +71,9 @@ export default function MasterTable<T extends IEntity>(
     editFn,
     deleteFn,
     viewFn,
+    addBtn,
   } = props;
+
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<string>(sortBy);
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -77,10 +81,7 @@ export default function MasterTable<T extends IEntity>(
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: string
-  ) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: string) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -112,16 +113,13 @@ export default function MasterTable<T extends IEntity>(
       );
     }
     setSelected(newSelected);
-    console.log(newSelected);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -131,7 +129,6 @@ export default function MasterTable<T extends IEntity>(
   };
 
   const rows = data.length;
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows) : 0;
 
   const visibleRows = React.useMemo(
@@ -143,13 +140,14 @@ export default function MasterTable<T extends IEntity>(
   );
 
   return (
-    <Box>
-      <Paper elevation={0}>
+    <Box sx={{ width: "100%"}}>
+      <Paper elevation={3} sx={{ borderRadius: 2, overflow: "hidden" }}>
         <MasterTableToolbar
           numSelected={selected.length}
           canSelectMultiple={canSelectMultiple}
           tableHeading={tableHeading}
           addNewUrl={addNewLink}
+          addBtn={addBtn}
         >
           {children}
         </MasterTableToolbar>
@@ -164,9 +162,8 @@ export default function MasterTable<T extends IEntity>(
               rowCount={rows}
               headCells={headCells}
               canSelectMultiple={canSelectMultiple}
-              hasActions={(viewFn !== undefined || editFn !== undefined || deleteFn !== undefined)}
+              hasActions={!!(viewFn || editFn || deleteFn)}
             />
-
             <TableBody>
               {visibleRows.map((row: T, index) => {
                 const isItemSelected = selected.includes(row.id);
@@ -194,29 +191,31 @@ export default function MasterTable<T extends IEntity>(
                         />
                       </TableCell>
                     )}
-
                     {headCells.map((headCell: IHeadCell, index) => (
-                      <TableCell
-                        key={index}
-                        align={headCell.numeric ? "right" : "left"}
-                      >
-                        <span>{row[headCell.id]}</span>
+                      <TableCell key={index} align={headCell.alignment || "left"}>
+                        {headCell.type === "date" && (
+                          <span>{dayjs(row[headCell.id]).format("YYYY-MM-DD")}</span>
+                        )}
+                        {headCell.type === "number" && <span>{row[headCell.id]}</span>}
+                        {headCell.type === "text" && <span>{row[headCell.id]}</span>}
+                        {headCell.type === "boolean" && <span>{row[headCell.id]}</span>}
+                        {headCell.type === "component" && <span>{row[headCell.id]}</span>}
                       </TableCell>
                     ))}
                     <TableCell>
                       {editFn && (
                         <IconButton onClick={() => editFn(row.id)}>
-                          <EditIcon />
+                          <EditIcon sx={{ color: "primary.main" }} />
                         </IconButton>
                       )}
                       {deleteFn && (
                         <IconButton>
-                          <DeleteIcon />
+                          <DeleteIcon sx={{ color: "error.main" }} />
                         </IconButton>
                       )}
                       {viewFn && (
                         <IconButton>
-                          <RemoveRedEyeIcon />
+                          <RemoveRedEyeIcon sx={{ color: "info.main" }} />
                         </IconButton>
                       )}
                     </TableCell>
@@ -224,11 +223,7 @@ export default function MasterTable<T extends IEntity>(
                 );
               })}
               {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
+                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
@@ -243,11 +238,13 @@ export default function MasterTable<T extends IEntity>(
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ borderTop: 1, borderColor: "divider" }}
         />
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense"
+        label="Dense padding"
+        sx={{ mt: 2 }}
       />
     </Box>
   );

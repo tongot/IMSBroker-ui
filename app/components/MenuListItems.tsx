@@ -5,6 +5,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import React from "react";
 import DynamicIcon from "./DynamicIcon";
@@ -21,56 +22,58 @@ const MenuListItems: React.FC<MenuListItemsProps> = ({ open, routes }) => {
     <List>
       {routes.map((route) => (
         <ListItem key={route.name} disablePadding sx={{ display: "block" }}>
-          <ListItemButton
-            sx={[
-              {
-                minHeight: 48,
-                px: 2.5,
-              },
-              open
-                ? {
-                    justifyContent: "initial",
-                  }
-                : {
-                    justifyContent: "center",
-                  },
-            ]}
-            onClick={() => {
-              if (route.path) {
-                router.push(route.path);
-              }
-            }}
-          >
-            <ListItemIcon
+          <Tooltip title={route.name} placement="right">
+            <ListItemButton
               sx={[
                 {
-                  minWidth: 0,
-                  justifyContent: "center",
+                  minHeight: 48,
+                  px: 2.5,
                 },
                 open
                   ? {
-                      mr: 3,
+                      justifyContent: "initial",
                     }
                   : {
-                      mr: "auto",
+                      justifyContent: "center",
                     },
               ]}
+              onClick={() => {
+                if (route.path) {
+                  router.push(route.path);
+                }
+              }}
             >
-              {<DynamicIcon icon={route.icon} />}
-            </ListItemIcon>
-            <ListItemText
-              primary={route.name}
-              sx={[
-                open
-                  ? {
-                      opacity: 1,
-                    }
-                  : {
-                      opacity: 0,
-                    },
-              ]}
-            />
-          </ListItemButton>
+              <ListItemIcon
+                sx={[
+                  {
+                    minWidth: 0,
+                    justifyContent: "center",
+                  },
+                  open
+                    ? {
+                        mr: 3,
+                      }
+                    : {
+                        mr: "auto",
+                      },
+                ]}
+              >
+                {<DynamicIcon icon={route.icon} />}
+              </ListItemIcon>
+              <ListItemText
+                primary={route.name}
+                sx={[
+                  open
+                    ? {
+                        opacity: 1,
+                      }
+                    : {
+                        opacity: 0,
+                      },
+                ]}
+              />
+            </ListItemButton>
+          </Tooltip>
         </ListItem>
       ))}
     </List>

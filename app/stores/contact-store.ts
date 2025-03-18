@@ -1,9 +1,10 @@
 import { create } from "zustand";
-import IAddContact from "../interfaces/contact-information/contact";
-import IAddAddress from "../interfaces/contact-information/address";
-import {GET} from "../http/GET";
-import POST from "../http/POST";
-import IHttpResponse from "../http/http-response";
+import IAddContact from "../utils/interfaces/contact-information/contact";
+import IAddAddress from "../utils/interfaces/contact-information/address";
+import IHttpResponse from "../utils/http/http-response";
+import POST from "../utils/http/POST";
+import { GET } from "../utils/http/GET";
+
 
 type ContactsStore = {
   loadingContacts: boolean;
@@ -56,7 +57,7 @@ export const useContactStore = create<ContactsStore>((set, get) => ({
     contact.url = `/contacts/${entityType}/${entityId}/contact`;
 
     set({ loadingContacts: true });
-    const savedContact: IHttpResponse<IAddContact> = await POST(contact);
+    const savedContact: IHttpResponse<IAddContact> = await POST(contact, contact.url);
     set({ loadingContacts: false });
 
     if (savedContact.success) {
@@ -67,7 +68,7 @@ export const useContactStore = create<ContactsStore>((set, get) => ({
   addContactList: (contact) => set(() => ({ contacts: contact })),
   removeContact: async (index) => {
     const url = `/contacts/${get().contacts[index].id}/contact-delete`;
-    const deleteContact: IHttpResponse<string> = await POST({ url: url });
+    const deleteContact: IHttpResponse<string> = await POST({ url: url },url);
 
     if (deleteContact.success) {
       set((state) => ({
@@ -98,7 +99,7 @@ export const useContactStore = create<ContactsStore>((set, get) => ({
     address.url = `/contacts/${entityType}/${entityId}/contact-update`;
 
     set({ loadingContacts: true });
-    const savedContact: IHttpResponse<IAddContact> = await POST(address);
+    const savedContact: IHttpResponse<IAddContact> = await POST(address, address.url);
     set({ loadingContacts: false });
 
     if (savedContact.success) {
@@ -121,7 +122,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
     address.url = `/contacts/${entityType}/${entityId}/address`;
 
     set({ loadingAddresses: true });
-    const savedAddress: IHttpResponse<IAddAddress> = await POST(address);
+    const savedAddress: IHttpResponse<IAddAddress> = await POST(address, address.url);
     set({ loadingAddresses: false });
 
     if (savedAddress.success) {
@@ -133,7 +134,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
 
   removeAddress: async (index) =>{
     const url = `/contacts/${get().addresses[index].id}/address-delete`;
-    const deleteAddress: IHttpResponse<string> = await POST({ url: url });
+    const deleteAddress: IHttpResponse<string> = await POST({ url: url }, url);
 
     if (deleteAddress.success) {
       set((state) => ({
@@ -159,7 +160,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
     address.url = `/contacts/${entityType}/${entityId}/address-update`;
 
     set({ loadingAddresses: true });
-    const savedContact: IHttpResponse<IAddContact> = await POST(address);
+    const savedContact: IHttpResponse<IAddContact> = await POST(address, address.url);
     set({ loadingAddresses: false });
 
     if (savedContact.success) {

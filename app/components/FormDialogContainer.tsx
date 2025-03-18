@@ -11,6 +11,7 @@ interface RenderProps {
   formContent: React.ReactNode;
   heading:string;
   loading: boolean;
+  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | false;
 }
 
 const useFormDialogContainer = () => {
@@ -27,21 +28,25 @@ const useFormDialogContainer = () => {
     open,
     setOpenDialog,
     close,
-    render: ({ onClose, handleSubmit, formContent, heading, loading}: RenderProps) => (
-      <Dialog fullWidth open={openDialog}>
+    render: ({
+      onClose,
+      handleSubmit,
+      formContent,
+      heading,
+      loading,
+      maxWidth
+    }: RenderProps) => (
+      <Dialog fullWidth maxWidth={maxWidth} open={openDialog}>
         <FormContainer
           icon={icon}
           heading={heading}
           width={width}
           closeFn={close}
-          action={handleSubmit((data) =>
-            onClose({...data})
-          )}
+          action={handleSubmit((data) => onClose({ ...data }))}
           loading={loading}
         >
           {formContent}
         </FormContainer>
-
       </Dialog>
     ),
   };

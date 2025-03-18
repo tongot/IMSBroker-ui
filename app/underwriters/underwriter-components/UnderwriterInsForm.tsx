@@ -10,17 +10,17 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { useMutation } from "@tanstack/react-query";
-import POST from "@/app/http/POST";
-import IAddUnderwriterIns from "@/app/interfaces/underwriters/add-underwrite-ins";
+import POST from "@/app/utils/http/POST";
+import IAddUnderwriterIns from "@/app/utils/interfaces/underwriters/add-underwrite-ins";
 import { queryClient } from "@/app/components/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
-import IHttpResponse from "@/app/http/http-response";
-import IUnderwriterIns from "@/app/interfaces/underwriters/underwriter-ins";
+import IHttpResponse from "@/app/utils/http/http-response";
+import IUnderwriterIns from "@/app/utils/interfaces/underwriters/underwriter-ins";
 
 interface UnderwriterInsFormProps {
   editInsType?: IUnderwriterIns;
@@ -39,10 +39,6 @@ const UnderwriterInsForm = ({
     formState: { errors },
   } = useForm({ mode: "onChange" });
 
-  debugger
-  const [totalCommission, setTotalCommission] = useState(
-    editInsType?.totalCommission || 0
-  );
   const notifications = useNotifications();
   const getInsType = useInsTypeStore((state) => state.getInsTypes);
   const loadingTypes = useInsTypeStore((state) => state.loadingInsType);
@@ -54,15 +50,18 @@ const UnderwriterInsForm = ({
   const vat = watch("vat");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: IAddUnderwriterIns) => POST(data),
+    mutationFn: (data: IAddUnderwriterIns) => POST(data, data.url),
 
     onSuccess: (data: IHttpResponse<IUnderwriterIns>) => {
       queryClient.invalidateQueries({ queryKey: ["underwriters-ins"] });
       if (data.success) {
-        notifications.show(`${ editInsType ? 'Updated' : 'Added'} Insurance successful`, {
-          severity: "success",
-          autoHideDuration: 3000,
-        });
+        notifications.show(
+          `${editInsType ? "Updated" : "Added"} Insurance successful`,
+          {
+            severity: "success",
+            autoHideDuration: 3000,
+          }
+        );
         dialog.close();
         reset();
       } else {
@@ -81,10 +80,10 @@ const UnderwriterInsForm = ({
   });
   const handelTotalCommissionCalc = () => {
     if (!commission || !vat) {
-      setValue('totalCommission',0)
+      setValue("totalCommission", 0);
       return;
     }
-    setValue('totalCommission',+commission + +vat);
+    setValue("totalCommission", +commission + +vat);
     //setTotalCommission();
   };
 
@@ -161,12 +160,12 @@ const UnderwriterInsForm = ({
   );
 
   const handleCreateUnderwriterIns = (data: IAddUnderwriterIns) => {
-    if(editInsType){
+    if (editInsType) {
       data.id = editInsType.id;
       data.underwriterId = underwriterId;
       data.url = "/underwriter/Underwriter-ins/update";
       mutate({ ...data });
-      return
+      return;
     }
     data.underwriterId = underwriterId;
     data.url = "/underwriter/Underwriter-ins";
@@ -188,7 +187,6 @@ const UnderwriterInsForm = ({
         onClick={() => {
           dialog.open();
           reset();
-          setTotalCommission(0);
         }}
       >
         {editInsType ? <EditIcon color="success" /> : <AddIcon />}

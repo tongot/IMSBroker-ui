@@ -12,9 +12,9 @@ import {
   TextField,
 } from "@mui/material";
 import { useAddressStore } from "@/app/stores/contact-store";
-import IAddAddress from "@/app/interfaces/contact-information/address";
+import IAddAddress from "@/app/utils/interfaces/contact-information/address";
 import Grid from "@mui/material/Grid2";
-import { AddressType } from "@/app/interfaces/enums";
+import { AddressType } from "@/app/utils/interfaces/enums";
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 
@@ -139,8 +139,7 @@ const AddressInputButton = ({address, entityId, entityType}:AddressProps) => {
   };
 
   const openDialogAddAddress = () => {
-    console.log("open");
-    dialog.open();
+       dialog.open();
   };
 
   return (

@@ -2,12 +2,12 @@
 import React from "react";
 import MainContainer from "../components/MainContainer";
 import { useQuery } from "@tanstack/react-query";
-import {GET} from "../http/GET";
-import IHeadCell from "../interfaces/head-cell";
 import MasterTable from "../components/table/MasterTable";
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';
-import IUnderwriterList from "../interfaces/underwriters/underwriter-list";
 import { useRouter } from "next/navigation";
+import { GET } from "../utils/http/GET";
+import IUnderwriterList from "../utils/interfaces/underwriters/underwriter-list";
+import IHeadCell from "../utils/interfaces/head-cell";
 
 const UnderwriterPage = () => {
   const router = useRouter();
@@ -22,13 +22,13 @@ const UnderwriterPage = () => {
     const headCells: IHeadCell[] = [
       {
         id: "name",
-        numeric: false,
+        type: "text",
         disablePadding: true,
         label: "Name",
       },
       {
         id: "status",
-        numeric: true,
+        type: "text",
         disablePadding: true,
         label: "Status",
       }
@@ -36,7 +36,7 @@ const UnderwriterPage = () => {
 
     children = (
       <MasterTable
-        canSelectMultiple={true}
+        canSelectMultiple={false}
         headCells={headCells}
         data={data}
         sortBy="name"
