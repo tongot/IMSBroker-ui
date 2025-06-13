@@ -114,7 +114,7 @@ export default function MiniDrawer({
           <MenuListItems open={open} routes={routesSettings} />
         </Drawer>
       )}
-      <Box component="main" sx={{ flexGrow: 300, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 300, p: 1 }}>
         <DrawerHeader />
         {children}
       </Box>

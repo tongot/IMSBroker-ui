@@ -56,6 +56,14 @@ const ROUTES: Route[] = [
   //   icon: "Settings",
   //   roles: ["admin"],
   // },
+
+  {
+    type: "Settings",
+    name: "Users",
+    path: "/users",
+    icon: "AccountBox",
+    roles: ["admin"],
+  },
   {
     type: "Settings",
     name: "Underwriters",

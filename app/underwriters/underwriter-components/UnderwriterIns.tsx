@@ -9,6 +9,7 @@ import IHttpResponse from "@/app/utils/http/http-response";
 import UnderwriterInsForm from "./UnderwriterInsForm";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
+import IconSettings from "@mui/icons-material/Settings";
 
 interface UnderwriterProps {
   underwriterId: number;
@@ -82,9 +83,7 @@ const UnderwriterIns = ({ underwriterId }: UnderwriterProps) => {
                   <Link
                     href={`/underwriters/${underwriterId}/config-cover/${x.id}`}
                   >
-                    <Button variant="outlined" size="small">
-                      add cover
-                    </Button>
+                    <Button startIcon={<IconSettings />}>settings</Button>
                   </Link>
                 </Box>
               </>

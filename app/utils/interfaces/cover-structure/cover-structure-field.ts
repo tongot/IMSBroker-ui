@@ -12,4 +12,6 @@ export default interface ICoverStructureField extends IPosting, IValidationPrope
   order:number;
   validationObject:string;
   insuranceMainTypeId:number;
+  premiumCalcRule:[];
+  value:string;
 }

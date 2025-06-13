@@ -103,7 +103,7 @@ const ContactInputButton = ({editContact, entityId, entityType}:ContactInputButt
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreateContact(data as IAddContact),
+        onSubmit: (data) => handleCreateContact(data as IAddContact),
         formContent: form,
         heading: "New underwriter contact",
         loading:loadingContacts

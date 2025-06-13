@@ -6,10 +6,11 @@ import AccountCircleRound from "@mui/icons-material/AccountCircleRounded";
 import { FieldValues, UseFormHandleSubmit } from "react-hook-form";
 
 interface RenderProps {
-  onClose: <T>(data: T) => void;
+  onSubmit: <T>(data: T) => void;
   handleSubmit: UseFormHandleSubmit<FieldValues, undefined>;
+  onClose?: () => void;
   formContent: React.ReactNode;
-  heading:string;
+  heading: string;
   loading: boolean;
   maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | false;
 }
@@ -29,20 +30,21 @@ const useFormDialogContainer = () => {
     setOpenDialog,
     close,
     render: ({
-      onClose,
+      onSubmit,
       handleSubmit,
+      onClose,
       formContent,
       heading,
       loading,
-      maxWidth
+      maxWidth,
     }: RenderProps) => (
       <Dialog fullWidth maxWidth={maxWidth} open={openDialog}>
         <FormContainer
           icon={icon}
           heading={heading}
           width={width}
-          closeFn={close}
-          action={handleSubmit((data) => onClose({ ...data }))}
+          closeFn={onClose ? onClose : close}
+          action={handleSubmit((data) => onSubmit({ ...data }))}
           loading={loading}
         >
           {formContent}

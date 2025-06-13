@@ -4,4 +4,5 @@ export default interface IUser{
     email: string;
     roles: string[];
     password: string;
+    isSelected: boolean;
 }

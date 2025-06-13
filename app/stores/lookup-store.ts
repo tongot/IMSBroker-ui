@@ -38,7 +38,6 @@ export const useLookupStore = create<lookupStore>((set, get) => ({
   getLookupFor: async (lookupType) => {
     set({ loadingLookup: true });
     const res = await GET<ILookup[]>(`/lookup/${lookupType}`);
-    debugger;
     set({ loadingLookup: false });
     set({ lookupData: res });
   },

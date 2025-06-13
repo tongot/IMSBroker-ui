@@ -17,7 +17,6 @@ export async function GET<T>(url: string): Promise<T> {
         window.location.href = "/login";
       }
     }
-    console.log("Error fetching data", e);
     return null as T;
   }
 }

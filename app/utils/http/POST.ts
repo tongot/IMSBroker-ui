@@ -11,6 +11,7 @@ export default async function POST<T>(data: T, url:string) {
     const res = await axios.post(`${apiUrl}${url}`, data);
     return res.data;
   } catch (e: unknown) {
+    
     if (axios.isAxiosError(e)) {
       console.log("Error fetching data", e);
       if (e.response?.status === 401) {
@@ -18,6 +19,6 @@ export default async function POST<T>(data: T, url:string) {
         window.location.href = "/login";
       }
     }
-    throw new Error("Error Adding data");
+    throw new Error(e + "2Error Adding data");
   }
 }

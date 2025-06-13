@@ -3,7 +3,7 @@ import MasterTable from "@/app/components/table/MasterTable";
 import { GET } from "@/app/utils/http/GET";
 import ICoverStructureFieldRule from "@/app/utils/interfaces/cover-structure/cover-structure-field-rule";
 import IHeadCell from "@/app/utils/interfaces/head-cell";
-import { Box, Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import AddFieldRuleForm from "./AddFieldRuleForm";
@@ -103,11 +103,7 @@ const FieldRules = ({ field, refetchField }: FieldRulesProps) => {
       </MasterTable>
     );
   }
-  return (
-    <Paper elevation={3} sx={{ padding: 1 }}>
-      {children}
-    </Paper>
-  );
+  return <Box sx={{ padding: 1 }}>{children}</Box>;
 };
 
 export default FieldRules;

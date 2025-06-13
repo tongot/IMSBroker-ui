@@ -10,6 +10,7 @@ const GenerateYupSchema = (rules: IValidationProperties[]) => {
     switch (rule.type) {
       case "text":
         validator = yup.string();
+        validator = validator.default(rule.defaultValue || "");
         if (rule.isRequired)
           validator = validator.required(`${rule.name} is required`);
         if (rule.min)
@@ -32,12 +33,14 @@ const GenerateYupSchema = (rules: IValidationProperties[]) => {
 
       case "options":
         validator = yup.string();
+        validator = validator.default(rule.defaultValue || "");
         if (rule.isRequired)
           validator = validator.required(`${rule.name} is required`);
         break;
 
       case "expanded-text":
         validator = yup.string();
+        validator = validator.default(rule.defaultValue || "");
         if (rule.isRequired)
           validator = validator.required(`${rule.name} is required`);
         if (rule.min)
@@ -54,10 +57,11 @@ const GenerateYupSchema = (rules: IValidationProperties[]) => {
 
       case "number":
         validator = yup.number();
+        validator = validator.default(+rule.defaultValue || null);
         if (rule.isRequired)
           validator = validator.required(`${rule.name} is required`);
         if (rule.isPositiveNumber)
-             validator = validator.positive("this must be greater than zero");
+          validator = validator.positive("this must be greater than zero");
         if (rule.min)
           validator = validator.min(
             Number(rule.min),
@@ -68,7 +72,7 @@ const GenerateYupSchema = (rules: IValidationProperties[]) => {
             Number(rule.max),
             `${rule.name} must be at most ${rule.max}`
           );
-        // 
+        //
         if (rule.lessThan) {
           validator = validator.max(
             yup.ref(rule.lessThan),
@@ -85,6 +89,9 @@ const GenerateYupSchema = (rules: IValidationProperties[]) => {
 
       case "date":
         validator = yup.date();
+        validator = validator.default(
+          (rule.defaultValue && new Date(rule.defaultValue)) || ""
+        );
         if (rule.isRequired)
           validator = validator.required(`${rule.name} is required`);
         if (rule.lessThan) {
@@ -99,7 +106,11 @@ const GenerateYupSchema = (rules: IValidationProperties[]) => {
             `${rule.name} must be after ${rule.greaterThan}`
           );
         }
+        break;
 
+      case "bool":
+        validator = yup.boolean();
+        validator = validator.default(rule.defaultValue === "true" ? true : false)
         break;
 
       default:

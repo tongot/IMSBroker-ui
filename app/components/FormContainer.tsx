@@ -22,6 +22,8 @@ interface FormContainerProps {
   action: (e?: React.FormEvent) => void; // Allow optional event parameter
   loading: boolean;
   btnText?: string;
+  loadingBtnText?:string;
+  btnIcon?:React.ReactNode;
   disableSubmit?: boolean; // Add a prop to disable the submit button
 }
 
@@ -34,6 +36,8 @@ const FormContainer: React.FC<FormContainerProps> = ({
   action,
   loading,
   btnText,
+  loadingBtnText,
+  btnIcon,
   disableSubmit = false, // Default to false
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,7 +51,6 @@ const FormContainer: React.FC<FormContainerProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 2,
       }}
     >
       <Paper
@@ -57,7 +60,6 @@ const FormContainer: React.FC<FormContainerProps> = ({
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          borderRadius: 2,
           overflow: "hidden",
         }}
       >
@@ -88,9 +90,6 @@ const FormContainer: React.FC<FormContainerProps> = ({
           </Tooltip>
         </Box>
 
-        {/* Divider */}
-        <Divider />
-
         {/* Form Content */}
         <Box sx={{ p: 3 }}>{children}</Box>
 
@@ -114,15 +113,15 @@ const FormContainer: React.FC<FormContainerProps> = ({
             startIcon={
               loading ? (
                 <CircularProgress size={20} color="inherit" />
-              ) : btnText ? (
-                icon
+              ) : btnIcon ? (
+                btnIcon
               ) : (
                 <SaveIcon />
               )
             }
             sx={{ minWidth: 120 }}
           >
-            {loading ? "Saving..." : btnText ? btnText : "Save"}
+            {loading ? (loadingBtnText ? loadingBtnText : "Saving...") : (btnText ? btnText : "Save")}
           </Button>
         </Box>
       </Paper>

@@ -146,7 +146,7 @@ const AddressInputButton = ({address, entityId, entityType}:AddressProps) => {
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreateAddress(data as IAddAddress),
+        onSubmit: (data) => handleCreateAddress(data as IAddAddress),
         formContent: form,
         heading: "New underwriter Address",
         loading: loadingAddresses

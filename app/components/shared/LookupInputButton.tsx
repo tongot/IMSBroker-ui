@@ -117,7 +117,7 @@ const LookupInputButton = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreateLookup(data as IAddLookup),
+        onSubmit: (data) => handleCreateLookup(data as IAddLookup),
         formContent: form,
         heading: "Lookup - "+ lookupTypes,
         loading: isPending,

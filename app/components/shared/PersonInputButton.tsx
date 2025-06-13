@@ -365,7 +365,7 @@ const PersonInputButton = ({ personData }: PersonProps) => {
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreatePerson(data as IPerson),
+        onSubmit: (data) => handleCreatePerson(data as IPerson),
         formContent: form,
         heading: "New Person",
         loading: loadingLookup || isPending,

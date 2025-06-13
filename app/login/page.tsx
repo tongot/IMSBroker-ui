@@ -10,12 +10,12 @@ import {
   CircularProgress,
   Avatar,
   CssBaseline,
-  Grid,
   Link,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Grid from "@mui/material/Grid2";
 
 const url = process.env.REACT_APP_API_URL || "http://localhost:5091/api";
 const localUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -144,12 +144,12 @@ export default function LoginPage() {
             {loginLoading ? "Signing In..." : "Sign In"}
           </Button>
           <Grid container>
-            <Grid item xs>
+            <Grid size={{ xs: 12 }}>
               <Link href="#" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
-            <Grid item>
+            <Grid>
               <Link href="#" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>

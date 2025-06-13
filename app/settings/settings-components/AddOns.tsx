@@ -1,20 +1,15 @@
 import React, { useState } from "react";
 import { Box, Typography, List, ListItem, ListItemText, TextField, Paper } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import { useQuery } from "@tanstack/react-query";
-import IDefaultAddOn from "@/app/utils/interfaces/cover-structure/add-on";
-import { GET } from "@/app/utils/http/GET";
 import AddOnsInputButton from "@/app/components/shared/AddOnsInputButton";
+import { useAddonsQuery } from "@/app/utils/queries/add-ons";
 
 
 const AddOns: React.FC = () => {
 
   const [searchString, setSearchString] = useState<string>('');
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["addons"], // Unique key for caching
-    queryFn: () => GET<IDefaultAddOn[]>("/addons"), // Function to fetch data
-  });
+  const { data, isLoading } = useAddonsQuery();
 
   const handleSearch = (stringSearch: string) => {
     setSearchString(stringSearch);

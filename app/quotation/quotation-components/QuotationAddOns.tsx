@@ -1,27 +1,38 @@
-import React from 'react'
-import AddIcon from '@mui/icons-material/Add'
-import useFormDialogContainer from '@/app/components/FormDialogContainer';
-import { Box, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { useQuery } from '@tanstack/react-query';
-import IAddOn from '@/app/utils/interfaces/quotation/add-ons';
-import { GET } from '@/app/utils/http/GET';
+import React from "react";
+import AddIcon from "@mui/icons-material/Add";
+import useFormDialogContainer from "@/app/components/FormDialogContainer";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { QuotationAddOnDto } from "@/app/api/ims-client";
 
-const QuotationAddOns = () => {
-    
+interface AddOnProps {
+  isLoading: boolean;
+  data: string[];
+  selectedAddOns: string[];
+  handleAddOnChange?: (addOn: SelectChangeEvent<string[]>) => void;
+  handleAddAddOn: (addOn: QuotationAddOnDto) => void;
+}
+const QuotationAddOns = ({
+  isLoading,
+  data,
+  handleAddAddOn,
+}: AddOnProps) => {
   const addOnsDialog = useFormDialogContainer();
 
-  const { data, isLoading } = useQuery({
-    enabled: false,
-    queryKey: ["Add-ons"],
-    queryFn: () => GET<IAddOn[]>("/quotation/add-ons"), // Function to fetch data
-  });
-  
   const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ mode: "onChange" });
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({ mode: "onChange" });
 
   const form = (
     <Box
@@ -32,63 +43,57 @@ const QuotationAddOns = () => {
         gap: 2,
       }}
     >
-       {data ? <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Select add ons</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          {...register("id", {})}
-          error={!!errors.postalCode}
-          label="Select add ons"
-          defaultValue={data[0].id}
-        >
-          {data.map((item) => (
-            <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>:
-      <div>Loading...</div>
-      } 
-       
-      <TextField
+      {isLoading && <div>Loading...</div>}
+      {data?.length > 0 && (
+        <>
+          <FormControl fullWidth>
+            <InputLabel id="type-label">Add on name</InputLabel>
+            <Select
+              labelId="type-label-select-label"
+              id="type-label-select"
+              {...register("name", {
+                required: "Add on name is required",
+              })}
+              error={!!errors.name}
+              label="Add on name"
+            >
+              {data.map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        type="number"
-        {...register("value", {
-          required: "Value is required",
-          min: {
-            value: 0,
-            message: "Value must be 10 digits",
-          },
-        })}
-        error={!!errors.mobileNumber}
-        helperText={String(errors.value?.message || "")}
-        label="Value"
-        defaultValue=""
-      ></TextField>
+          <TextField
+            fullWidth
+            label="Amount"
+            {...register("amount", { required: "Amount is required" })}
+            error={!!errors.amount}
+            helperText={String(errors.amount?.message || "")}
+            sx={{ mb: 2 }}
+          />
+        </>
+      )}
     </Box>
   );
 
-
-  const handleCreateAddOn = (data:IAddOn) => {
-        console.log(data)
-  }
+  const handleCreateAddOn = (data: QuotationAddOnDto) => {
+    handleAddAddOn(data);
+  };
 
   return (
     <div>
-        {addOnsDialog.render({
-            handleSubmit,
-            onClose: (data) => handleCreateAddOn(data as IAddOn),
-            formContent: form,
-            heading: "Add Ons",
-            loading:isLoading
-        })}
-        <IconButton
-            onClick={addOnsDialog.open}
-        >
-            {<AddIcon/>}
-        </IconButton>
-        </div>
-  )
-}
+      {addOnsDialog.render({
+        handleSubmit,
+        onSubmit: (data) => handleCreateAddOn(data as QuotationAddOnDto),
+        formContent: form,
+        heading: "Add Ons",
+        loading: isLoading,
+      })}
+       <Button startIcon={<AddIcon />}onClick={addOnsDialog.open}>Add AddOns</Button>
+    </div>
+  );
+};
 
-export default QuotationAddOns
+export default QuotationAddOns;

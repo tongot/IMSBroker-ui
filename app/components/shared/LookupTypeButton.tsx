@@ -113,7 +113,7 @@ const LookupTypeButton = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreateLookupType(data as ILookupType),
+        onSubmit: (data) => handleCreateLookupType(data as ILookupType),
         formContent: form,
         heading: "Lookup - Type",
         loading: isPending,

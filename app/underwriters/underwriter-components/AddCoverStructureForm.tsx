@@ -152,7 +152,7 @@ const AddCoverStructureForm = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) =>
+        onSubmit: (data) =>
           handleCreateCover(data as ICoverStructure),
         formContent: form,
         heading: "New Cover",

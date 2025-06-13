@@ -176,7 +176,7 @@ const UnderwriterInsForm = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) =>
+        onSubmit: (data) =>
           handleCreateUnderwriterIns(data as IAddUnderwriterIns),
         formContent: form,
         heading: "New Underwriter Insurance",

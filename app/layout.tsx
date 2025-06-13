@@ -4,6 +4,8 @@ import "./globals.css";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 import { SideBarMenu } from "./components";
 import Provider from "./components/Provider";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +34,17 @@ export default function RootLayout({
           <Provider>
             <SideBarMenu>{children}</SideBarMenu>
           </Provider>
+          <ToastContainer
+            position="bottom-left"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss={false}
+            pauseOnHover
+            theme="light"
+          />
         </body>
       </ThemeRegistry>
     </html>

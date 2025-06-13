@@ -27,6 +27,7 @@ import { FieldTypes } from "@/app/utils/interfaces/enums";
 import Grid from "@mui/material/Grid2";
 import { useLookupStore } from "@/app/stores/lookup-store";
 import IValidationProperties from "@/app/utils/interfaces/validation-properties";
+import { ICoverStructureFieldDto } from "@/app/api/ims-client";
 
 interface AddCoverStructureFieldFormProps {
   editStructureField?: ICoverStructureField;
@@ -61,20 +62,27 @@ const AddCoverStructureFieldForm = ({
   const [selectedField, setSelectedField] = useState(editStructureField?.type);
 
   useEffect(() => {
-    debugger;
-    //if (fieldType === "options" || selectedField === "options") {
     getLookupCategories();
     setSelectedField(fieldType);
-    //}
     if (editStructureField) {
       setValue("type", editStructureField.type);
     }
   }, [fieldType, getLookupCategories, selectedField]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: ICoverStructureField) => POST(data, data.url),
+    mutationFn: (data: ICoverStructureFieldDto) =>
+      POST(
+        data,
+        editStructureField
+          ? isTemplate
+            ? "/template/field"
+            : "/CoverStructure/field/update"
+          : isTemplate
+            ? "/template/field"
+            : "/CoverStructure/field"
+      ),
 
-    onSuccess: (data: IHttpResponse<ICoverStructureField>) => {
+    onSuccess: (data: IHttpResponse<ICoverStructureFieldDto>) => {
       queryClient.invalidateQueries({
         queryKey: [
           "underwriters-covers-field" + coverStructureId,
@@ -365,6 +373,8 @@ const AddCoverStructureFieldForm = ({
     }
 
     data.validationObject = JSON.stringify(rule);
+    data.premiumCalcRule = [];
+    data.value = ""
 
     if (data.type !== "options") {
       data.defaultValue = "";
@@ -373,8 +383,10 @@ const AddCoverStructureFieldForm = ({
     data.insuranceMainTypeId = coverStructureId;
     if (editStructureField) {
       data.id = editStructureField.id;
-      data.url = isTemplate ? "/template/field" : "/CoverStructure/field/update";
-      mutate({ ...data });
+      data.url = isTemplate
+        ? "/template/field"
+        : "/CoverStructure/field/update";
+      mutate({ ...data});
       return;
     }
     data.url = isTemplate ? "/template/field" : "/CoverStructure/field";
@@ -388,7 +400,7 @@ const AddCoverStructureFieldForm = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreateCover(data as ICoverStructureField),
+        onSubmit: (data) => handleCreateCover(data as ICoverStructureField),
         formContent: form,
         heading: "New Field",
         loading: isPending,

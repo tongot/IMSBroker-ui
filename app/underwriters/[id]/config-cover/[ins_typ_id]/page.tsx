@@ -2,11 +2,12 @@
 import {
   Box,
   Button,
+  Divider,
   List,
   ListItem,
   Paper,
-  TextField,
   Typography,
+  Skeleton,
 } from "@mui/material";
 import React, { use, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid2";
@@ -18,10 +19,15 @@ import ICoverStructure from "@/app/utils/interfaces/cover-structure/cover-struct
 import { GET } from "@/app/utils/http/GET";
 import SingleLineList from "@/app/components/list/SingleLineList";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import CustomAccordion from "@/app/components/CustomAccordion";
 import AddCoverStructureFieldForm from "@/app/underwriters/underwriter-components/AddCoverStructureFieldForm";
 import ICoverStructureField from "@/app/utils/interfaces/cover-structure/cover-structure-field";
-import FieldRules from "@/app/underwriters/underwriter-components/FieldRules";
+import CoverFieldsDisplay from "@/app/underwriters/underwriter-components/CoverFieldsDisplay";
+import CustomTab from "@/app/components/CustomTab";
+import StateMachineView from "@/app/underwriters/underwriter-components/CoverStates";
+import { useStateMachineStore } from "@/app/stores/state-machine-store";
+import AddCoverStateForm from "@/app/underwriters/underwriter-components/AddCoverStateForm";
+import { IAddCoverState } from "@/app/utils/interfaces/state-machine/add-cover-state";
+import CoverAddOns from "@/app/underwriters/underwriter-components/CoverAddOns";
 
 const ConfigCoverPage = ({
   params,
@@ -33,9 +39,16 @@ const ConfigCoverPage = ({
   const [coverName, setCoverName] = useState("");
   const [fieldSearchString, setFieldSearchString] = useState("");
 
+  const getCoverState = useStateMachineStore((state) => state.getStates);
+  const states = useStateMachineStore((state) => state.coverStates);
+  const addState = useStateMachineStore((state) => state.addState);
+  const removeState = useStateMachineStore((state) => state.removeState);
+  const updateState = useStateMachineStore((state) => state.updateState);
+  const loadingStates = useStateMachineStore((state) => state.loadingStates);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["underwriters-covers" + ids.ins_typ_id], // Unique key for caching
-    queryFn: () => GET<ICoverStructure[]>("/CoverStructure/" + +ids.ins_typ_id), // Function to fetch data
+    queryKey: ["underwriters-covers" + ids.ins_typ_id],
+    queryFn: () => GET<ICoverStructure[]>("/CoverStructure/" + +ids.ins_typ_id),
   });
 
   const {
@@ -43,14 +56,17 @@ const ConfigCoverPage = ({
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ["underwriters-covers-field" + currentCoverId], // Unique key for caching
+    queryKey: ["underwriters-covers-field" + currentCoverId],
     queryFn: () =>
-      GET<ICoverStructureField[]>("/CoverStructure/field/" + currentCoverId), // Function to fetch data
+      GET<ICoverStructureField[]>("/CoverStructure/field/" + currentCoverId),
     enabled: false,
   });
 
   useEffect(() => {
-    if (currentCoverId) refetch();
+    if (currentCoverId) {
+      refetch();
+      getCoverState(currentCoverId);
+    }
   }, [currentCoverId, refetch]);
 
   const handleGetFields = (id: number, name: string) => {
@@ -58,107 +74,140 @@ const ConfigCoverPage = ({
     setCoverName(name);
   };
 
+  const handleAddCoverState = async (state: IAddCoverState) => {
+    await addState(state);
+  };
+
+  const handleDeleteCoverState = async (stateId: number) => {
+    await removeState(stateId);
+  };
+
+  const handleUpdateCoverState = async (state: IAddCoverState) => {
+    await updateState(state);
+  };
+
+  const handleOnSubmitCoverState = async (state: IAddCoverState) => {
+    state.stateCategory = "Quotations";
+    if (state.id) {
+      await handleUpdateCoverState(state);
+    } else {
+      await handleAddCoverState(state);
+    }
+  };
+
   const handleFilterField = (searchString: string) => {
     setFieldSearchString(searchString);
   };
 
+  const fieldDisplay = (
+    <Box>
+      {isFetching && <Skeleton variant="rectangular" height={100} />}
+      {fieldData && !isFetching ? (
+        <>
+          <AddCoverStructureFieldForm
+            refetchField={refetch}
+            coverStructureId={currentCoverId}
+          />
+          <CoverFieldsDisplay
+            isFetching={isFetching}
+            fieldData={fieldData}
+            onFilter={handleFilterField}
+            fieldSearchString={fieldSearchString}
+            refetch={refetch}
+          />
+        </>
+      ) : (
+        <Typography color="text.secondary" mt={2}>
+          {!isFetching ? "Please select a cover to view fields." : ""}
+        </Typography>
+      )}
+    </Box>
+  );
+
+  const addOns = (
+    <Box>{currentCoverId && <CoverAddOns coverId={currentCoverId} />}</Box>
+  );
+
+  const statesDisplay = (
+    <Box>
+      {currentCoverId && (
+        <Box>
+          <AddCoverStateForm
+            loading={loadingStates}
+            coverId={currentCoverId}
+            onSubmit={handleOnSubmitCoverState}
+          />
+        </Box>
+      )}
+      <StateMachineView
+        loading={loadingStates}
+        currentCoverId={currentCoverId}
+        onDelete={handleDeleteCoverState}
+        onSubmit={handleOnSubmitCoverState}
+        states={states}
+      />
+    </Box>
+  );
+
   return (
     <MainContainer heading="Cover configurations" icon={<EngineeringIcon />}>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 12, md: 5, xl: 3 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "stretch",
-              gap: "1rem",
-            }}
-          >
+      <Grid container spacing={4}>
+        <Grid size={{ xs: 12, md: 5, xl: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             <AddCoverStructureForm
               underwriterId={+ids.id}
               insTypeId={+ids.ins_typ_id}
             />
-            {isLoading && <span>Loading...</span>}
-            {data && (
-              <Paper>
-                <List>
-                  {data.map((item) => (
-                    <>
-                      <SingleLineList
-                        key={item.id}
-                        primaryText={item.name}
-                        secondaryText={`Rate: ${item.rate}%`}
-                        avatarIcon={<SettingsSuggestIcon />}
-                      >
-                        <></>
-                      </SingleLineList>
-                      <ListItem>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "1rem",
-                            justifyContent: "end",
-                          }}
+            {isLoading ? (
+              <Skeleton variant="rectangular" height={120} />
+            ) : (
+              data && (
+                <Paper variant="outlined" sx={{ p: 2 }}>
+                  <List disablePadding>
+                    {data.map((item) => (
+                      <Box key={item.id}>
+                        <SingleLineList
+                          primaryText={item.name}
+                          secondaryText={`Rate: ${item.rate}%`}
+                          avatarIcon={<SettingsSuggestIcon />}
                         >
+                          <></>
+                        </SingleLineList>
+                        <ListItem sx={{ justifyContent: "flex-end", gap: 1 }}>
                           <AddCoverStructureForm
                             underwriterId={+ids.id}
                             insTypeId={+ids.ins_typ_id}
                             editStructure={item}
                           />
-                          <AddCoverStructureFieldForm
-                            refetchField={refetch}
-                            coverStructureId={item.id}
-                          />
                           <Button
                             variant="text"
+                            size="small"
                             onClick={() => handleGetFields(item.id, item.name)}
                           >
                             more...
                           </Button>
-                        </Box>
-                      </ListItem>
-                    </>
-                  ))}
-                </List>
-              </Paper>
+                        </ListItem>
+                        <Divider />
+                      </Box>
+                    ))}
+                  </List>
+                </Paper>
+              )
             )}
           </Box>
         </Grid>
-        <Grid sx={{ px: 4 }} size={{ xs: 12, sm: 12, md: 7, xl: 9 }}>
-          {isFetching && <div>Loading...</div>}
-          {fieldData ? (
-            <div>
-              <Typography variant="h6">{coverName} fields</Typography>
-              <TextField
-                label={`Search Field Name`}
-                fullWidth
-                value={fieldSearchString}
-                onChange={(e) => handleFilterField(e.target.value)}
-                sx={{ my: 2 }}
-              />
-              {fieldData
-                .filter((x) =>
-                  x.name
-                    .toLocaleLowerCase()
-                    .includes(fieldSearchString.toLocaleLowerCase())
-                )
-                .map((item) => (
-                  <CustomAccordion
-                    key={item.id}
-                    panelId={item.id}
-                    heading={item.name + " (" + item.type + ")"}
-                  >
-                    <FieldRules field={item} refetchField={refetch} />
-                  </CustomAccordion>
-                ))}
-              {fieldData.length < 1 && !isFetching && (
-                <div>No fields for this cover, press +Field to add</div>
-              )}
-            </div>
-          ) : (
-            <div>{!isFetching ? "Please select cover to view fields" : ""}</div>
-          )}
+        <Grid size={{ xs: 12, md: 7, xl: 9 }}>
+          <Typography variant="h6" gutterBottom>
+            {coverName}
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <CustomTab
+            items={[
+              { heading: "Field Settings", children: fieldDisplay },
+              { heading: "State Settings", children: statesDisplay },
+              { heading: "Add on Overrides", children: addOns },
+            ]}
+          />
         </Grid>
       </Grid>
     </MainContainer>

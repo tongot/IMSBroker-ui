@@ -15,7 +15,7 @@ const MainContainer: React.FC<MainContainerProps> = ({
   heading,
 }) => {
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height:"90vh", pt:1}}>
       <Paper
         elevation={0}
         sx={{
@@ -45,7 +45,7 @@ const MainContainer: React.FC<MainContainerProps> = ({
         <Divider />
 
         {/* Content Section */}
-        <Box sx={{ p: 3 }}>{children}</Box>
+        <Box>{children}</Box>
       </Paper>
     </Box>
   );

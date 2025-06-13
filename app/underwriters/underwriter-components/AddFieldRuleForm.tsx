@@ -59,7 +59,7 @@ const AddFieldRuleForm = ({
         );
       case "text":
         return Operators.filter(
-          (item) => item.value === "=" || item.value === "!="
+          (item) => item.value === "==" || item.value === "!="
         );
       case "date":
         return Operators.filter(
@@ -67,7 +67,7 @@ const AddFieldRuleForm = ({
         );
       case "bool":
         return Operators.filter(
-          (item) => item.value === "=" || item.value === "!="
+          (item) => item.value === "==" || item.value === "!="
         );
       case "options":
         return Operators.filter(
@@ -256,7 +256,7 @@ const AddFieldRuleForm = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleFieldRule(data as ICoverStructureFieldRule),
+        onSubmit: (data) => handleFieldRule(data as ICoverStructureFieldRule),
         formContent: form,
         heading: rule ? "Edit Rule" : "New Rule",
         loading: isPending,
@@ -272,18 +272,18 @@ const AddFieldRuleForm = ({
         >
           <EditIcon color="success" />
         </IconButton>
-      ):
-      (<Button
-        variant="outlined"
-        startIcon={rule ? <EditIcon color="success" /> : <AddIcon />}
-        onClick={() => {
-          dialog.open();
-          reset();
-        }}
-      >
-        {rule ? "Edit" : "Field Rule"}
-      </Button>)
-}
+      ) : (
+        <Button
+          variant="outlined"
+          startIcon={rule ? <EditIcon color="success" /> : <AddIcon />}
+          onClick={() => {
+            dialog.open();
+            reset();
+          }}
+        >
+          {rule ? "Edit" : "Field Rule"}
+        </Button>
+      )}
     </div>
   );
 };

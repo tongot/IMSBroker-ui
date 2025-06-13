@@ -1,6 +1,7 @@
 export default interface IValidationProperties{
     type:string;
-    name:string
+    name:string;
+    defaultValue?:any;
     isPositiveNumber?:boolean;
     min?:number;
     max?:number;

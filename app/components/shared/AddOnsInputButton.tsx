@@ -28,7 +28,7 @@ const AddOnsInputButton = ({
 
   useEffect(()=>{
     getInsType();
-  },[])
+  },[getInsType])
 
   const {
     register,
@@ -137,7 +137,7 @@ const AddOnsInputButton = ({
   );
 
   const handleCreateAddOn = (data: IDefaultAddOn) => {
-    console.log(data)
+
     if (editAddOn) {
       data.id = editAddOn.id;
     }
@@ -154,7 +154,7 @@ const AddOnsInputButton = ({
     <div>
       {dialog.render({
         handleSubmit,
-        onClose: (data) => handleCreateAddOn(data as IDefaultAddOn),
+        onSubmit: (data) => handleCreateAddOn(data as IDefaultAddOn),
         formContent: form,
         heading: "Lookup - "+ editAddOn?.name,
         loading: isPending,

@@ -32,15 +32,15 @@ const AdjusterTypes = [
   new Enums('Flat','flat')
 ]
 
-const Operators=[
-  new Enums('Equal','='),
-  new Enums('Not Equal','!='),
-  new Enums('Greater Than','>'),
-  new Enums('Less Than','<'),
-  new Enums('Greater Than or Equal','>='),
-  new Enums('Less Than or Equal','<='),
-  new Enums('In','IN'),
-  new Enums('Not In','NOT-IN'),
-]
+const Operators = [
+  new Enums("Equal", "=="),
+  new Enums("Not Equal", "!="),
+  new Enums("Greater Than", ">"),
+  new Enums("Less Than", "<"),
+  new Enums("Greater Than or Equal", ">="),
+  new Enums("Less Than or Equal", "<="),
+  new Enums("In", "IN"),
+  new Enums("Not In", "NOT-IN"),
+];
 
 export { AddressType, UnderwriterStatus, FieldTypes, AdjusterTypes, Operators };
