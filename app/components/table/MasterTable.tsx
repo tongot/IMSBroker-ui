@@ -20,6 +20,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import dayjs from "dayjs";
+import { formatCurrency } from "@/app/utils/common-funcs";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -200,6 +201,7 @@ export default function MasterTable<T extends IEntity>(props: MasterTableProps<T
                         {headCell.type === "text" && <span>{row[headCell.id]}</span>}
                         {headCell.type === "boolean" && <span>{row[headCell.id]}</span>}
                         {headCell.type === "component" && <span>{row[headCell.id]}</span>}
+                        {headCell.type === "currency" && <span>{formatCurrency(row[headCell.id])}</span>}
                       </TableCell>
                     ))}
                     <TableCell>

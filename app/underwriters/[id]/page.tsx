@@ -4,7 +4,7 @@ import IAddUnderwriter from "@/app/utils/interfaces/underwriters/underwriter-add
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react'
 import AddUnderwriterForm from '../underwriter-components/AddUnderwriterForm';
-import MainContainer from "@/app/components/MainContainer";
+import MainContainer from "@/app/components/layout/MainContainer";
 import EditIcon from '@mui/icons-material/Edit'
 
 

@@ -15,7 +15,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Session } from "next-auth";
 import { Logout } from "@mui/icons-material";
 import { signOut } from "next-auth/react";
-import MenuButton from "./MenuButton";
+import MenuButton from "../custom-components/MenuButton";
 
 const localUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -47,17 +47,18 @@ const PrimarySearchAppBar: React.FC<SearchAppBarProps> = ({
         btnColor="inherit"
         tooltipText="User Menu"
         controlType="icon-button"
+        canCloseOnClick={true}
       >
-          <MenuItem>
-            <Avatar /> {session?.user?.name}
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={logout}>
-            <ListItemIcon>
-              <Logout fontSize="small" />
-            </ListItemIcon>
-            Logout
-          </MenuItem>
+        <MenuItem>
+          <Avatar /> {session?.user?.name}
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={logout}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
       </MenuButton>
     );
 

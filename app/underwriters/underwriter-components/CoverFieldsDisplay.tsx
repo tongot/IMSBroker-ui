@@ -1,4 +1,4 @@
-import CustomAccordion from "@/app/components/CustomAccordion";
+import CustomAccordion from "@/app/components/custom-components/CustomAccordion";
 import React from "react";
 import FieldRules from "./FieldRules";
 import { TextField, Typography, Box, Fade } from "@mui/material";

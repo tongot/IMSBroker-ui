@@ -1,5 +1,5 @@
 "use client";
-import useFormDialogContainer from "@/app/components/FormDialogContainer";
+import useFormDialogContainer from "@/app/components/custom-components/FormDialogContainer";
 import {
   Box,
   Button,
@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/app/components/Provider";
+import { queryClient } from "@/app/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import ICoverStructure from "@/app/utils/interfaces/cover-structure/cover-structure";
 import IHttpResponse from "@/app/utils/http/http-response";

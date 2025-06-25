@@ -1,5 +1,5 @@
 "use client";
-import useFormDialogContainer from "@/app/components/FormDialogContainer";
+import useFormDialogContainer from "@/app/components/custom-components/FormDialogContainer";
 import { useInsTypeStore } from "@/app/stores/lookup-store";
 import {
   Box,
@@ -17,7 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useMutation } from "@tanstack/react-query";
 import POST from "@/app/utils/http/POST";
 import IAddUnderwriterIns from "@/app/utils/interfaces/underwriters/add-underwrite-ins";
-import { queryClient } from "@/app/components/Provider";
+import { queryClient } from "@/app/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import IHttpResponse from "@/app/utils/http/http-response";
 import IUnderwriterIns from "@/app/utils/interfaces/underwriters/underwriter-ins";

@@ -18,7 +18,7 @@ interface FormContainerProps {
   icon: React.ReactNode;
   heading: string;
   children: React.ReactNode;
-  closeFn: () => void;
+  closeFn?: () => void;
   action: (e?: React.FormEvent) => void; // Allow optional event parameter
   loading: boolean;
   btnText?: string;
@@ -54,7 +54,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
       }}
     >
       <Paper
-        elevation={3}
+        elevation={0}
         sx={{
           width: width,
           display: "flex",
@@ -69,9 +69,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            p: 2,
-            backgroundColor: "primary.main",
-            color: "primary.contrastText",
+            p: 1
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -80,18 +78,18 @@ const FormContainer: React.FC<FormContainerProps> = ({
               {heading}
             </Typography>
           </Box>
-          <Tooltip title="Close">
+          {closeFn &&<Tooltip title="Close">
             <IconButton
               onClick={closeFn}
-              sx={{ color: "primary.contrastText" }}
+              sx={{ color: "primary" }}
             >
               <CloseIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip>}
         </Box>
-
+        <Divider/>
         {/* Form Content */}
-        <Box sx={{ p: 3 }}>{children}</Box>
+        <Box sx={{ p: 1 }}>{children}</Box>
 
         {/* Divider */}
         <Divider />

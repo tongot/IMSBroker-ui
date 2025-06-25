@@ -1,35 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Paper,
-  Typography,
-  TextField,
-  Box,
-  SelectChangeEvent,
-  IconButton,
-  Button,
-} from "@mui/material";
+import { Paper, Typography, TextField, Alert } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useInsTypeStore } from "@/app/stores/lookup-store";
 import IValidationProperties from "@/app/utils/interfaces/validation-properties";
 import { GET } from "@/app/utils/http/GET";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import GenerateYupSchema from "@/app/utils/field-validator";
-import FieldRender from "@/app/components/shared/FieldRender";
+import FieldRender from "@/app/components/shared-button-components/FieldRender";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
-import FormContainer from "@/app/components/FormContainer";
+import FormContainer from "@/app/components/custom-components/FormContainer";
 import IHttpResponse from "@/app/utils/http/http-response";
-import { queryClient } from "@/app/components/Provider";
+import { queryClient } from "@/app/Provider";
 import POST from "@/app/utils/http/POST";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import dayjs from "dayjs";
-import QuotationAddOns from "./QuotationAddOns";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ViewQuoteModal from "./ViewQuoteModal";
-import InsuranceSelectionModal from "./InsuranceSelectionModal";
-import AddIcon from "@mui/icons-material/Add";
 import GenerateIcon from "@mui/icons-material/Refresh";
+import WarningIcon from "@mui/icons-material/Warning";
 
 import {
   CoverStructureFieldDto,
@@ -38,51 +26,54 @@ import {
   GetQuotationChoiceDto,
   GetQuotationDto,
   IGetQuotationChoiceDto,
+  InsuranceMainType,
   ISaveQuotationCommand,
   QuotationAddOnDto,
   QuotationFieldDto,
   QuotationViewDto,
 } from "@/app/api/ims-client";
-import IMSModal from "@/app/components/IMSModal";
+import IMSModal from "@/app/components/custom-components/IMSModal";
 import ConflictQuoteConfirm from "./ConflictQuoteConfirm";
 import GetFieldRules from "@/app/utils/field-rules";
+import AddOnsList from "./AddOnsList";
+import { useAddOnForQuotes } from "@/app/utils/queries/add-ons";
+import { useRouter } from "next/navigation";
 
-const SubmitQuotation = () => {
-  const [category, setCategory] = useState<number>(0);
-  const getInsType = useInsTypeStore((state) => state.getInsTypes);
-  const loadingTypes = useInsTypeStore((state) => state.loadingInsType);
-  const insTypes = useInsTypeStore((state) => state.insuranceTypes);
+interface SubmitQuotationProps {
+  insTypes: InsuranceMainType[];
+  category: number;
+  quoteDescription: string;
+  setAddOns: React.Dispatch<React.SetStateAction<QuotationAddOnDto[]>>;
+  addOns: QuotationAddOnDto[];
+  setSelectedQuote: React.Dispatch<
+    React.SetStateAction<QuotationViewDto | null>
+  >;
+  selectedQuote: QuotationViewDto | null;
+}
+
+const SubmitQuotation = ({
+  insTypes,
+  category,
+  quoteDescription,
+  setAddOns,
+  addOns,
+  setSelectedQuote,
+  selectedQuote,
+}: SubmitQuotationProps) => {
   const [rules, setRules] = useState<IValidationProperties[]>();
-  const [addOnName, setAddOnName] = React.useState<string[]>([]);
-  const [addOns, setAddOns] = useState<QuotationAddOnDto[]>([]);
+  const [addOnNames, setAddOnName] = useState<string[]>([]);
   const [quotes, setQuotes] = useState<QuotationViewDto[]>([]);
-  const [selectedQuote, setSelectedQuote] = useState<QuotationViewDto | null>(
-    null
-  );
+
   const [quoteDetails, setQuoteDetails] = useState<GetQuotationDto | null>(
     null
   );
-  //const [quoteToSave, setQuoteToSave] = useState<ISaveQuotationCommand>();
+  const [excessAmount, setExcessAmount] = useState("");
   const [createQuoteResponse, setCreateQuoteResponse] =
     useState<CreateQuotationRespDto>();
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalSelectInsOpen, setModalSelectInsOpen] = useState(false);
-  const [quoteDescription, setQuoteDescription] = useState<string>("");
   const [openConflictModal, setOpenConflictModal] = useState(false);
   const notifications = useNotifications();
-
-  const handleAddOnChange = (event: SelectChangeEvent<typeof addOnName>) => {
-    const {
-      target: { value },
-    } = event;
-    setAddOnName(typeof value === "string" ? value.split(",") : value);
-  };
-
-  const handleContinue = (category: number, description: string) => {
-    setModalSelectInsOpen(false);
-    setQuoteDescription(description);
-    setCategory(category);
-  };
+  const router = useRouter();
 
   const { mutate: saveQuotation, isPending: isSavePending } = useMutation({
     mutationFn: (quoteRequest: ISaveQuotationCommand) =>
@@ -98,13 +89,16 @@ const SubmitQuotation = () => {
           severity: "success",
           autoHideDuration: 3000,
         });
+        router.push(`/quotation/${data.data.quotationId}`);
       } else {
         notifications.show(data.message, {
           severity: "warning",
           autoHideDuration: 10000,
         });
-        setCreateQuoteResponse(data.data);
-        setOpenConflictModal(true);
+        if (data.data.conflictingQuoteId) {
+          setCreateQuoteResponse(data.data);
+          setOpenConflictModal(true);
+        }
       }
     },
     onError: (e) => {
@@ -125,21 +119,9 @@ const SubmitQuotation = () => {
       };
       //setQuoteToSave(quotation);
       saveQuotation(quotation);
+      setOpenConflictModal(false);
     }
   };
-
-  // const handleIgnoreConflictAndSave = () => {
-  //   if (quoteToSave) {
-  //     const quotation = new SaveQuotationCommand({
-  //       personId: quoteToSave.personId,
-  //       quoteVariables: quoteToSave.quoteVariables,
-  //       quote: quoteToSave.quote,
-  //       isContinueingWithConflict: true,
-  //     });
-  //     saveQuotation(quotation);
-  //     setOpenConflictModal(false);
-  //   }
-  // };
 
   const { data, isLoading, refetch } = useQuery({
     enabled: false,
@@ -151,11 +133,7 @@ const SubmitQuotation = () => {
     data: addOnsData,
     isLoading: addOnsIsLoading,
     refetch: addOnsRefetch,
-  } = useQuery({
-    enabled: false,
-    queryKey: ["Add-ons"],
-    queryFn: () => GET<string[]>("/quotation/add-ons/" + category), // Function to fetch data
-  });
+  } = useAddOnForQuotes(category, false);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (quoteRequest: IGetQuotationChoiceDto) =>
@@ -249,8 +227,7 @@ const SubmitQuotation = () => {
       refetch();
       addOnsRefetch();
     }
-    getInsType();
-  }, [getInsType, category, data]);
+  }, [category, data]);
 
   const handleOnSubmit = (formData: any) => {
     console.log("Form Data: ", formData);
@@ -301,12 +278,41 @@ const SubmitQuotation = () => {
       insuranceTypeId: category,
       riskLoading: formData.riskLoading,
       expectedMedicalCost: formData.expectedMedicalCost,
+      excess: formData.excess,
       fields: fields,
       addOns: addOns,
     });
     setQuoteDetails(quoteRequest);
     mutate(quoteRequest);
   };
+
+  const getAmountField = (value: any) => {
+    if (value.sumInsured) {
+      return value.sumInsured;
+    } else if (value.sumAssured) {
+      return value.sumAssured;
+    } else if (value.insurableValue) {
+      return value.insurableValue;
+    } else if (value.expectedMedicalCost) {
+      return value.expectedMedicalCost;
+    }
+    return undefined;
+  };
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (!getAmountField(value) || !value.excess) {
+        setExcessAmount("");
+        return;
+      }
+      if (+value.excess > +getAmountField(value)) {
+        setExcessAmount("Excess must be less than base amount");
+      } else {
+        setExcessAmount("");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, excessAmount]);
 
   let fieldContent = null;
   if (isLoading) {
@@ -315,6 +321,11 @@ const SubmitQuotation = () => {
   if (data) {
     fieldContent = (
       <div>
+        {excessAmount && (
+          <Alert icon={<WarningIcon fontSize="inherit" />} severity="error">
+            {excessAmount}
+          </Alert>
+        )}
         <Paper elevation={0} sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>
             Base value
@@ -434,6 +445,35 @@ const SubmitQuotation = () => {
             </>
           )}
         </Paper>
+
+        {insTypes.find((x) => x.id === category)?.hasExcess && (
+          <Paper elevation={0} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Excess value
+            </Typography>
+            <Controller
+              name="excess"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  type="number"
+                  label="Excess"
+                  fullWidth
+                  value={field.value ?? ""}
+                  error={!!errors[field.name]}
+                  helperText={
+                    errors[field.name]
+                      ? errors[field.name]?.message?.toString()
+                      : ""
+                  }
+                />
+              )}
+            />
+          </Paper>
+        )}
+
         {data.categorisedFields?.map((fieldCategory, index) => (
           <Paper elevation={0} sx={{ p: 2, mt: 2 }} key={index}>
             <Typography variant="h6" gutterBottom>
@@ -452,130 +492,65 @@ const SubmitQuotation = () => {
     );
   }
 
-  const close = () => {
-    setCategory(0);
-    setQuoteDescription("");
-    setAddOns([]);
-    setAddOnName([]);
-    setSelectedQuote(null);
-  };
-
   const handleAddAddOn = (data: QuotationAddOnDto) => {
     const addOn: QuotationAddOnDto = new QuotationAddOnDto({
       id: data.id,
       name: data.name,
       amount: data.amount,
+      excess: data.excess,
       rate: 0,
-      note:''
+      note: "",
     });
     setAddOns((prev) => [...prev, addOn]);
+    setAddOnName((prev) => [...prev, data?.name || ""]);
   };
 
   const icon = <RequestQuoteIcon sx={{ fontSize: 25 }} />;
 
   return (
     <>
-      <InsuranceSelectionModal
-        insTypes={insTypes}
-        open={modalSelectInsOpen}
-        onClose={() => setModalSelectInsOpen(false)}
-        onContinue={handleContinue}
-      />
-      {category === 0 ? (
-        <>
-          <Button
-            startIcon={<AddIcon />}
-            loading={loadingTypes}
-            onClick={() => setModalSelectInsOpen(true)}
+      <div>
+        <Paper sx={{ mb: 2 }} elevation={0}>
+          <FormContainer
+            icon={icon}
+            heading={`New ${insTypes.find((x) => x.id === category)?.name || ""} Quotation  (${quoteDescription})`}
+            width={{ md: "100%" }}
+            action={handleSubmit((data) => handleOnSubmit(data))}
+            loading={isPending}
+            btnIcon={<GenerateIcon />}
+            btnText="Generate Quote"
+            loadingBtnText="Calculating"
+            disableSubmit={!!excessAmount}
           >
-            Create Quote
-          </Button>
-        </>
-      ) : (
-        <div>
-          <Paper sx={{ mb: 2 }} elevation={0}>
-            <FormContainer
-              icon={icon}
-              heading={`New ${insTypes.find((x) => x.id === category)?.name || ""} Quotation  (${quoteDescription})`}
-              width={{ md: "100%" }}
-              closeFn={close}
-              action={handleSubmit((data) => handleOnSubmit(data))}
-              loading={isPending}
-              btnIcon={<GenerateIcon/>}
-              btnText="Generate Quote"
-              loadingBtnText="Calculating"
-            >
-              <>
-                {fieldContent}
-                <Paper
-                  elevation={0}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    p: 2,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "start",
-                      alignItems: "center",
-                      p: 2,
-                    }}
-                  >
-                    <QuotationAddOns
-                      isLoading={addOnsIsLoading}
-                      data={addOnsData || []}
-                      selectedAddOns={addOnName}
-                      handleAddOnChange={handleAddOnChange}
-                      handleAddAddOn={handleAddAddOn}
-                    />
-                  </Box>
-                  <Box>
-                    {addOns.map((addOn) => (
-                      <Paper
-                        key={addOn.name}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "start",
-                          p: 2,
-                          mb: 1,
-                        }}
-                      >
-                        <Typography variant="body1">{addOn.name}</Typography>
-                        <Typography variant="body1">{addOn.amount}</Typography>
-                        <IconButton
-                          onClick={() => {
-                            setAddOns((prev) =>
-                              prev.filter((x) => x.name !== addOn.name)
-                            );
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Paper>
-                    ))}
-                  </Box>
-                  <IMSModal
-                    openDialog={modalOpen}
-                    heading="Select Best Quotation"
-                    maxWidth="md"
-                    onClose={() => setModalOpen(false)}
-                  >
-                    <ViewQuoteModal
-                      onConfirmSelection={handleSaveQuote}
-                      quotes={quotes}
-                      onSelect={(quote) => setSelectedQuote(quote)}
-                      loading={isSavePending}
-                    />
-                  </IMSModal>
-                </Paper>
-              </>
-            </FormContainer>
-          </Paper>
-        </div>
-      )}
+            <>
+              {fieldContent}
+
+              <AddOnsList
+                addOns={addOns}
+                addOnsData={addOnsData || []}
+                addOnsIsLoading={addOnsIsLoading}
+                selectedAddOns={addOnNames}
+                setAddOns={setAddOns}
+                setSelectedAddOns={setAddOnName}
+                handleAddAddOn={handleAddAddOn}
+              />
+              <IMSModal
+                openDialog={modalOpen}
+                heading="Select Best Quotation"
+                maxWidth="md"
+                onClose={() => setModalOpen(false)}
+              >
+                <ViewQuoteModal
+                  onConfirmSelection={handleSaveQuote}
+                  quotes={quotes}
+                  onSelect={(quote) => setSelectedQuote(quote)}
+                  loading={isSavePending}
+                />
+              </IMSModal>
+            </>
+          </FormContainer>
+        </Paper>
+      </div>
       <IMSModal
         openDialog={openConflictModal}
         heading="Select Quote"
@@ -583,6 +558,8 @@ const SubmitQuotation = () => {
         onClose={() => setOpenConflictModal(false)}
       >
         <ConflictQuoteConfirm
+          loading={isSavePending}
+          onIgnoreConflict={handleSaveQuote}
           data={createQuoteResponse || new CreateQuotationRespDto()}
         />
       </IMSModal>

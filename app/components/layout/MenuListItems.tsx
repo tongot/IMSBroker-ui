@@ -8,8 +8,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import React from "react";
-import DynamicIcon from "./DynamicIcon";
-import { Route } from "../utils/routes";
+import DynamicIcon from "../custom-components/DynamicIcon";
+import { Route } from "../../utils/routes";
 import { useRouter } from "next/navigation";
 
 interface MenuListItemsProps {

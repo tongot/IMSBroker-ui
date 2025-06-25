@@ -1654,6 +1654,49 @@ export class QuotationClient {
         this.baseUrl = baseUrl ?? "";
     }
 
+    getQuotations(searchString: string | null | undefined): Promise<QuotationListDto[]> {
+        let url_ = this.baseUrl + "/api/Quotation?";
+        if (searchString !== undefined && searchString !== null)
+            url_ += "searchString=" + encodeURIComponent("" + searchString) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetQuotations(_response);
+        });
+    }
+
+    protected processGetQuotations(response: Response): Promise<QuotationListDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(QuotationListDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<QuotationListDto[]>(null as any);
+    }
+
     getQuoteFields(insuranceTypeId: number): Promise<FieldsViewDto> {
         let url_ = this.baseUrl + "/api/Quotation/GetQuoteFields/{insuranceTypeId}";
         if (insuranceTypeId === undefined || insuranceTypeId === null)
@@ -1691,11 +1734,13 @@ export class QuotationClient {
         return Promise.resolve<FieldsViewDto>(null as any);
     }
 
-    getAddOnTypes(insuranceTypeId: number): Promise<string[]> {
-        let url_ = this.baseUrl + "/api/Quotation/add-ons/{insuranceTypeId}";
+    getAddOnTypes(insuranceTypeId: number, coverId: number | null | undefined): Promise<string[]> {
+        let url_ = this.baseUrl + "/api/Quotation/add-ons/{insuranceTypeId}?";
         if (insuranceTypeId === undefined || insuranceTypeId === null)
             throw new Error("The parameter 'insuranceTypeId' must be defined.");
         url_ = url_.replace("{insuranceTypeId}", encodeURIComponent("" + insuranceTypeId));
+        if (coverId !== undefined && coverId !== null)
+            url_ += "coverId=" + encodeURIComponent("" + coverId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -3381,6 +3426,7 @@ export interface IGetCoverStructureAddOnDto {
 export class InsuranceMainType implements IInsuranceMainType {
     id?: number;
     name?: string;
+    hasExcess?: boolean;
     underwriters?: UnderwriterInsurance[];
 
     constructor(data?: IInsuranceMainType) {
@@ -3396,6 +3442,7 @@ export class InsuranceMainType implements IInsuranceMainType {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.hasExcess = _data["hasExcess"];
             if (Array.isArray(_data["underwriters"])) {
                 this.underwriters = [] as any;
                 for (let item of _data["underwriters"])
@@ -3415,6 +3462,7 @@ export class InsuranceMainType implements IInsuranceMainType {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["hasExcess"] = this.hasExcess;
         if (Array.isArray(this.underwriters)) {
             data["underwriters"] = [];
             for (let item of this.underwriters)
@@ -3427,6 +3475,7 @@ export class InsuranceMainType implements IInsuranceMainType {
 export interface IInsuranceMainType {
     id?: number;
     name?: string;
+    hasExcess?: boolean;
     underwriters?: UnderwriterInsurance[];
 }
 
@@ -4317,6 +4366,7 @@ export class QuotationAddOnDto implements IQuotationAddOnDto {
     rate?: number;
     amount?: number;
     quotationId?: number;
+    excess?: number;
     isSupported?: boolean;
     note?: string;
     changedAmount?: number;
@@ -4337,6 +4387,7 @@ export class QuotationAddOnDto implements IQuotationAddOnDto {
             this.rate = _data["rate"];
             this.amount = _data["amount"];
             this.quotationId = _data["quotationId"];
+            this.excess = _data["excess"];
             this.isSupported = _data["isSupported"];
             this.note = _data["note"];
             this.changedAmount = _data["changedAmount"];
@@ -4357,6 +4408,7 @@ export class QuotationAddOnDto implements IQuotationAddOnDto {
         data["rate"] = this.rate;
         data["amount"] = this.amount;
         data["quotationId"] = this.quotationId;
+        data["excess"] = this.excess;
         data["isSupported"] = this.isSupported;
         data["note"] = this.note;
         data["changedAmount"] = this.changedAmount;
@@ -4370,6 +4422,7 @@ export interface IQuotationAddOnDto {
     rate?: number;
     amount?: number;
     quotationId?: number;
+    excess?: number;
     isSupported?: boolean;
     note?: string;
     changedAmount?: number;
@@ -4383,6 +4436,7 @@ export class GetQuotationChoiceDto implements IGetQuotationChoiceDto {
     riskLoading?: number | undefined;
     insuranceType?: string;
     insuranceTypeId?: number;
+    excess?: number | undefined;
     fields?: QuotationFieldDto[];
     addOns?: QuotationAddOnDto[];
 
@@ -4404,6 +4458,7 @@ export class GetQuotationChoiceDto implements IGetQuotationChoiceDto {
             this.riskLoading = _data["riskLoading"];
             this.insuranceType = _data["insuranceType"];
             this.insuranceTypeId = _data["insuranceTypeId"];
+            this.excess = _data["excess"];
             if (Array.isArray(_data["fields"])) {
                 this.fields = [] as any;
                 for (let item of _data["fields"])
@@ -4433,6 +4488,7 @@ export class GetQuotationChoiceDto implements IGetQuotationChoiceDto {
         data["riskLoading"] = this.riskLoading;
         data["insuranceType"] = this.insuranceType;
         data["insuranceTypeId"] = this.insuranceTypeId;
+        data["excess"] = this.excess;
         if (Array.isArray(this.fields)) {
             data["fields"] = [];
             for (let item of this.fields)
@@ -4455,6 +4511,7 @@ export interface IGetQuotationChoiceDto {
     riskLoading?: number | undefined;
     insuranceType?: string;
     insuranceTypeId?: number;
+    excess?: number | undefined;
     fields?: QuotationFieldDto[];
     addOns?: QuotationAddOnDto[];
 }
@@ -4521,6 +4578,78 @@ export interface IQuotationFieldDto {
     type?: string;
     rules?: string;
     subHeading?: string;
+}
+
+export class QuotationListDto implements IQuotationListDto {
+    id?: number;
+    coverName?: string;
+    underwriterName?: string;
+    finalPremium?: number;
+    qouteNumber?: string;
+    amountInsured?: number;
+    excess?: number;
+    personName?: string;
+    createdBy?: string | undefined;
+    maybeModifiedOn?: Date;
+
+    constructor(data?: IQuotationListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.coverName = _data["coverName"];
+            this.underwriterName = _data["underwriterName"];
+            this.finalPremium = _data["finalPremium"];
+            this.qouteNumber = _data["qouteNumber"];
+            this.amountInsured = _data["amountInsured"];
+            this.excess = _data["excess"];
+            this.personName = _data["personName"];
+            this.createdBy = _data["createdBy"];
+            this.maybeModifiedOn = _data["maybeModifiedOn"] ? new Date(_data["maybeModifiedOn"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): QuotationListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new QuotationListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["coverName"] = this.coverName;
+        data["underwriterName"] = this.underwriterName;
+        data["finalPremium"] = this.finalPremium;
+        data["qouteNumber"] = this.qouteNumber;
+        data["amountInsured"] = this.amountInsured;
+        data["excess"] = this.excess;
+        data["personName"] = this.personName;
+        data["createdBy"] = this.createdBy;
+        data["maybeModifiedOn"] = this.maybeModifiedOn ? this.maybeModifiedOn.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IQuotationListDto {
+    id?: number;
+    coverName?: string;
+    underwriterName?: string;
+    finalPremium?: number;
+    qouteNumber?: string;
+    amountInsured?: number;
+    excess?: number;
+    personName?: string;
+    createdBy?: string | undefined;
+    maybeModifiedOn?: Date;
 }
 
 export class FieldsViewDto implements IFieldsViewDto {
@@ -4982,6 +5111,9 @@ export class GetQuotationDto implements IGetQuotationDto {
     finalPremium?: number;
     adjustmentDescription?: string;
     qouteNumber?: string;
+    amountInsured?: number;
+    quoteNotes?: string;
+    basePremiumAjustmentNotes?: string;
     personId?: number;
     coverStructure?: GetCoverDto;
     underwriter?: UnderwriterDto;
@@ -5008,6 +5140,9 @@ export class GetQuotationDto implements IGetQuotationDto {
             this.finalPremium = _data["finalPremium"];
             this.adjustmentDescription = _data["adjustmentDescription"];
             this.qouteNumber = _data["qouteNumber"];
+            this.amountInsured = _data["amountInsured"];
+            this.quoteNotes = _data["quoteNotes"];
+            this.basePremiumAjustmentNotes = _data["basePremiumAjustmentNotes"];
             this.personId = _data["personId"];
             this.coverStructure = _data["coverStructure"] ? GetCoverDto.fromJS(_data["coverStructure"]) : <any>undefined;
             this.underwriter = _data["underwriter"] ? UnderwriterDto.fromJS(_data["underwriter"]) : <any>undefined;
@@ -5042,6 +5177,9 @@ export class GetQuotationDto implements IGetQuotationDto {
         data["finalPremium"] = this.finalPremium;
         data["adjustmentDescription"] = this.adjustmentDescription;
         data["qouteNumber"] = this.qouteNumber;
+        data["amountInsured"] = this.amountInsured;
+        data["quoteNotes"] = this.quoteNotes;
+        data["basePremiumAjustmentNotes"] = this.basePremiumAjustmentNotes;
         data["personId"] = this.personId;
         data["coverStructure"] = this.coverStructure ? this.coverStructure.toJSON() : <any>undefined;
         data["underwriter"] = this.underwriter ? this.underwriter.toJSON() : <any>undefined;
@@ -5069,6 +5207,9 @@ export interface IGetQuotationDto {
     finalPremium?: number;
     adjustmentDescription?: string;
     qouteNumber?: string;
+    amountInsured?: number;
+    quoteNotes?: string;
+    basePremiumAjustmentNotes?: string;
     personId?: number;
     coverStructure?: GetCoverDto;
     underwriter?: UnderwriterDto;
@@ -5082,7 +5223,7 @@ export interface IGetQuotationDto {
 export class GetCoverDto implements IGetCoverDto {
     id?: number;
     name?: string;
-    basePremium?: number;
+    rate?: number;
     description?: string;
     hasDependances?: boolean;
     hasBeneficiary?: boolean;
@@ -5105,7 +5246,7 @@ export class GetCoverDto implements IGetCoverDto {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
-            this.basePremium = _data["basePremium"];
+            this.rate = _data["rate"];
             this.description = _data["description"];
             this.hasDependances = _data["hasDependances"];
             this.hasBeneficiary = _data["hasBeneficiary"];
@@ -5132,7 +5273,7 @@ export class GetCoverDto implements IGetCoverDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["basePremium"] = this.basePremium;
+        data["rate"] = this.rate;
         data["description"] = this.description;
         data["hasDependances"] = this.hasDependances;
         data["hasBeneficiary"] = this.hasBeneficiary;
@@ -5152,7 +5293,7 @@ export class GetCoverDto implements IGetCoverDto {
 export interface IGetCoverDto {
     id?: number;
     name?: string;
-    basePremium?: number;
+    rate?: number;
     description?: string;
     hasDependances?: boolean;
     hasBeneficiary?: boolean;

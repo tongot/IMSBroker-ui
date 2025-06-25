@@ -14,7 +14,14 @@ interface EnhancedTableToolbarProps {
 }
 
 export default function MasterTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, canSelectMultiple, children, tableHeading, addNewUrl, addBtn } = props;
+  const {
+    numSelected,
+    canSelectMultiple,
+    children,
+    tableHeading,
+    addNewUrl,
+    addBtn,
+  } = props;
 
   return (
     <>
@@ -33,11 +40,21 @@ export default function MasterTableToolbar(props: EnhancedTableToolbarProps) {
         {canSelectMultiple ? (
           <>
             {numSelected > 0 ? (
-              <Typography sx={{ flex: "1 1 100%" }} color="inherit" variant="subtitle1" component="div">
+              <Typography
+                sx={{ flex: "1 1 100%" }}
+                color="inherit"
+                variant="subtitle1"
+                component="div"
+              >
                 {numSelected} selected
               </Typography>
             ) : (
-              <Typography sx={{ flex: "1 1 100%" }} variant="h6" id="tableTitle" component="div">
+              <Typography
+                sx={{ flex: "1 1 100%" }}
+                variant="h6"
+                id="tableTitle"
+                component="div"
+              >
                 {tableHeading}
               </Typography>
             )}
@@ -50,26 +67,33 @@ export default function MasterTableToolbar(props: EnhancedTableToolbarProps) {
             )}
           </>
         ) : (
-          <Typography sx={{ flex: "1 1 100%" }} variant="h6" id="tableTitle" component="div">
+          <Typography
+            sx={{ flex: "1 1 100%" }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
             {tableHeading}
           </Typography>
         )}
-        {addBtn ? (
-          addBtn
-        ) : (
-          <Tooltip title="Add New">
-            <Link href={addNewUrl}>
-              <IconButton>
-                <AddIcon sx={{ color: "primary.main" }} />
-              </IconButton>
-            </Link>
-          </Tooltip>
-        )}
+        {(addBtn || addNewUrl) && (
+            <>
+              {addBtn ? (
+                addBtn
+              ) : (
+                <Tooltip title="Add New">
+                  <Link href={addNewUrl}>
+                    <IconButton>
+                      <AddIcon sx={{ color: "primary.main" }} />
+                    </IconButton>
+                  </Link>
+                </Tooltip>
+              )}
+            </>
+          )}
       </Toolbar>
       {children && (
-        <Toolbar sx={{ justifyContent: "end", mb: 2 }}>
-          {children}
-        </Toolbar>
+        <Toolbar sx={{ justifyContent: "end", mb: 2 }}>{children}</Toolbar>
       )}
     </>
   );

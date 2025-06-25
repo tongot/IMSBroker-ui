@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import AddOnOverrideForm from "./AddOnOverrideForm";
 import { List, ListItem, ListItemText, TextField } from "@mui/material";
 import { useCoverAddonsQuery } from "@/app/utils/queries/add-ons";
-import LoadingPage from "@/app/components/LoadingPage";
+import LoadingPage from "@/app/components/custom-components/LoadingPage";
 
 interface CoverAddOnsProps {
   coverId: number;

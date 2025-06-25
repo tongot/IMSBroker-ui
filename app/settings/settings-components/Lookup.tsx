@@ -9,12 +9,12 @@ import {
   Paper,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import LookupInputButton from "@/app/components/shared/LookupInputButton";
+import LookupInputButton from "@/app/components/shared-button-components/LookupInputButton";
 import { useQuery } from "@tanstack/react-query";
 import ILookupType from "@/app/utils/interfaces/lookups/Iookup-type";
 import { GET } from "@/app/utils/http/GET";
 import { useLookupStore } from "@/app/stores/lookup-store";
-import LookupTypeButton from "@/app/components/shared/LookupTypeButton";
+import LookupTypeButton from "@/app/components/shared-button-components/LookupTypeButton";
 
 
 const LookupsDisplay: React.FC = () => {

@@ -1,5 +1,5 @@
 "use client";
-import useFormDialogContainer from "@/app/components/FormDialogContainer";
+import useFormDialogContainer from "@/app/components/custom-components/FormDialogContainer";
 import Grid from "@mui/material/Grid2";
 import {
   Box,
@@ -26,7 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { ICoverState } from "@/app/utils/interfaces/state-machine/cover-state";
-import LookUpUserButton from "@/app/components/shared/LookUpUserButton";
+import LookUpUserButton from "@/app/components/shared-button-components/LookUpUserButton";
 import IUser from "@/app/utils/interfaces/users/user";
 import { useUserStore } from "@/app/stores/user-store";
 import { IAddCoverState } from "@/app/utils/interfaces/state-machine/add-cover-state";

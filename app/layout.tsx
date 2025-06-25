@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/theme/ThemeRegistry";
-import { SideBarMenu } from "./components";
-import Provider from "./components/Provider";
+import { SideBarMenu } from "./components/custom-components";
+import Provider from "./Provider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

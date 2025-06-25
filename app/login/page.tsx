@@ -77,7 +77,8 @@ export default function LoginPage() {
       sx={{
         display: "flex",
         justifyContent: "center",
-        backgroundColor: "#f5f5f5",
+        alignItems:"center",
+        height:"60vh"
       }}
     >
       <CssBaseline />

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import useFormDialogContainer from "../FormDialogContainer";
+import useFormDialogContainer from "../custom-components/FormDialogContainer";
 import { useForm } from "react-hook-form";
 import {
   Box,

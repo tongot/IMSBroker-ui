@@ -11,38 +11,38 @@ import {
   Typography,
   CircularProgress,
   IconButton,
-  Paper
+  Paper,
+  Grid, // Import Grid from stable MUI
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Search as SearchIcon, Close as CloseIcon } from "@mui/icons-material";
-import IMSModal from "../IMSModal";
-import { usePeopleStore } from "@/app/stores/people-store";
-import { IGetPersonDto } from "@/app/api/ims-client";
-import Grid from "@mui/material/Grid2";
+import IMSModal from "../custom-components/IMSModal";
+import { useUserStore } from "@/app/stores/user-store";
+import IUser from "@/app/utils/interfaces/users/user";
 
-const LookUpPersonButton = () => {
+const LookUpUserButton = () => {
   const [searchText, setSearchText] = React.useState<string>("");
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
-  const [searchedPeople, setSearchedPeople] = React.useState<IGetPersonDto[]>([]);
+  const [searchedUsers, setSearchedUsers] = React.useState<IUser[]>([]);
 
-  const searchedPeopleState = usePeopleStore((state) => state.peopleList);
-  const searchPeople = usePeopleStore((state) => state.searchPeople);
-  const loadingPeople = usePeopleStore((state) => state.loadingPeople);
-  const selectOrRemovePeople = usePeopleStore((state) => state.selectOrRemovePeople);
-  const selectedPeople = usePeopleStore((state) => state.selectedPeople);
-  const clearPeopleList = usePeopleStore((state) => state.clearPeopleList);
+  const searchedUserState = useUserStore((state) => state.userList);
+  const searchUser = useUserStore((state) => state.searchUser);
+  const loadingUser = useUserStore((state) => state.loadingUser);
+  const selectOrRemoveUser = useUserStore((state) => state.selectOrRemoveUser);
+  const selectedUsers = useUserStore((state) => state.selectedUsers);
+  const clearUserList = useUserStore((state) => state.clearUserList);
 
   const handleClose = useCallback(() => {
     setOpenDialog(false);
-    clearPeopleList();
+    clearUserList();
     setSearchText("");
-  }, [clearPeopleList]);
+  }, [clearUserList]);
 
   const handleSearch = useCallback(() => {
     if (searchText.trim()) {
-      searchPeople(searchText);
+      searchUser(searchText);
     }
-  }, [searchText, searchPeople]);
+  }, [searchText, searchUser]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -51,54 +51,51 @@ const LookUpPersonButton = () => {
   };
 
   useEffect(() => {
-    setSearchedPeople(searchedPeopleState);
-  }, [searchedPeopleState]);
+    setSearchedUsers(searchedUserState);
+  }, [searchedUserState]);
 
   const form = (
     <Paper elevation={0} sx={{ p: 2 }}>
       <Grid container spacing={2}>
-        {/* <Grid size={{xs:12}}>
+        <Grid item xs={12}>
           <Typography variant="h6" component="h2" gutterBottom>
-            Search Person
+            Search Users
           </Typography>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            Find and select people by name or identity number
+            Find and select users by name or username
           </Typography>
-        </Grid> */}
+        </Grid>
         
-        <Grid container size={{xs:12}} spacing={1} alignItems="center">
-          <Grid size={{xs:9}}>
+        <Grid container item xs={12} spacing={1} alignItems="center">
+          <Grid item xs>
             <TextField
               name="name"
-              label="Search person"
+              label="Search user"
               variant="outlined"
               size="small"
               fullWidth
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={handleKeyPress}
-              slotProps={{
-                input: {
-                  endAdornment: searchText && (
-                    <IconButton
-                      size="small"
-                      onClick={() => setSearchText("")}
-                      edge="end"
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  ),
-                },
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                endAdornment: searchText && (
+                  <IconButton
+                    size="small"
+                    onClick={() => setSearchText("")}
+                    edge="end"
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                ),
               }}
             />
           </Grid>
-          <Grid size={{xs:3}}>
+          <Grid item xs="auto">
             <Button
-              fullWidth
               variant="contained"
               disabled={!searchText.trim()}
               onClick={handleSearch}
-              startIcon={loadingPeople ? <CircularProgress size={20} /> : <SearchIcon />}
+              startIcon={loadingUser ? <CircularProgress size={20} /> : <SearchIcon />}
               sx={{ height: '40px' }}
             >
               Search
@@ -106,7 +103,7 @@ const LookUpPersonButton = () => {
           </Grid>
         </Grid>
 
-        <Grid size={{xs:12}}>
+        <Grid item xs={12}>
           <Box sx={{ 
             border: '1px solid',
             borderColor: 'divider',
@@ -115,16 +112,16 @@ const LookUpPersonButton = () => {
             overflowY: "auto",
             bgcolor: 'background.paper'
           }}>
-            {searchedPeople.length > 0 ? (
+            {searchedUsers.length > 0 ? (
               <List dense>
-                {searchedPeople.map((person) => (
+                {searchedUsers.map((user) => (
                   <ListItem
-                    key={person.id}
+                    key={user.id}
                     secondaryAction={
                       <Checkbox
                         edge="end"
-                        onChange={() => selectOrRemovePeople(person)}
-                        checked={person.isSelected}
+                        onChange={() => selectOrRemoveUser(user)}
+                        checked={user.isSelected}
                         color="primary"
                       />
                     }
@@ -134,14 +131,12 @@ const LookUpPersonButton = () => {
                       "&:hover": { bgcolor: "action.hover" },
                       "&:last-child": { borderBottom: "none" },
                     }}
-                    onClick={() => selectOrRemovePeople(person)}
+                    onClick={() => selectOrRemoveUser(user)}
                   >
                     <ListItemText 
-                      primary={ 
-                      <Typography variant="subtitle1" color="text.secondary">
-                        {person.lastName || person.firstName}
-                      </Typography>} 
-                      secondary={person.identityNumber || 'No id provided'}
+                      primary={user.userName} 
+                      primaryTypographyProps={{ fontWeight: 'medium' }}
+                      secondary={user.email || 'No email provided'}
                     />
                   </ListItem>
                 ))}
@@ -154,7 +149,7 @@ const LookUpPersonButton = () => {
                 height: 100,
                 color: 'text.secondary'
               }}>
-                {loadingPeople ? (
+                {loadingUser ? (
                   <CircularProgress size={24} />
                 ) : (
                   <Typography variant="body2">
@@ -166,14 +161,14 @@ const LookUpPersonButton = () => {
           </Box>
         </Grid>
 
-        <Grid size={{xs:12}} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
             onClick={handleClose}
-            disabled={loadingPeople}
+            disabled={loadingUser}
             sx={{ minWidth: 120 }}
           >
-            Done ({selectedPeople.length} selected)
+            Done ({selectedUsers.length} selected)
           </Button>
         </Grid>
       </Grid>
@@ -193,11 +188,11 @@ const LookUpPersonButton = () => {
           '&:hover': { bgcolor: 'primary.light', color: 'primary.contrastText' }
         }}
       >
-        Select Person
+        Add Users
       </Button>
       
       <IMSModal
-        heading="Search and Select People"
+        heading="User Selection"
         maxWidth="sm"
         onClose={handleClose}
         openDialog={openDialog}
@@ -208,4 +203,4 @@ const LookUpPersonButton = () => {
   );
 };
 
-export default LookUpPersonButton;
+export default LookUpUserButton;

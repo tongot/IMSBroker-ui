@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import IInsuranceMainType from "../utils/interfaces/lookups/insurance-main-types";
 import ILookup from "../utils/interfaces/lookups/lookup";
 import { GET } from "../utils/http/GET";
+import { InsuranceMainType } from "../api/ims-client";
 
 type InsuranceMainTypeStore = {
   loadingInsType: boolean;
-  insuranceTypes: IInsuranceMainType[];
+  insuranceTypes: InsuranceMainType[];
   getInsTypes: () => Promise<void>;
 };
 
@@ -14,7 +14,7 @@ type lookupStore = {
   lookupData: ILookup[];
   lookupCategories: string[];
   getLookupFor: (type: string) => Promise<void>;
-  getLookUp: (type: string) => ILookup[];
+  getLookUp: (type: string) => ILookup[]; 
   getLookupCategories: () => Promise<void>;
 };
 
@@ -24,7 +24,7 @@ export const useInsTypeStore = create<InsuranceMainTypeStore>((set) => ({
   insuranceTypes: [],
   getInsTypes: async () => {
     set({ loadingInsType: true });
-    const res = await GET<IInsuranceMainType[]>("/lookup/ins-types");
+    const res = await GET<InsuranceMainType[]>("/lookup/ins-types");
     set({ loadingInsType: false });
     set({ insuranceTypes: res });
   },

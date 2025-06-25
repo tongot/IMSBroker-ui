@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { TextField, MenuItem, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import FormContainer from "@/app/components/FormContainer";
+import FormContainer from "@/app/components/custom-components/FormContainer";
 
 // Enum replacement
 class Enums {

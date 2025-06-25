@@ -11,7 +11,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Header from "./Header";
 import { useSession } from "next-auth/react";
 import MenuListItems from "./MenuListItems";
-import ROUTES from "../utils/routes";
+import ROUTES from "../../utils/routes";
 
 const drawerWidth = 240;
 
@@ -44,7 +44,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
-
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -114,7 +113,7 @@ export default function MiniDrawer({
           <MenuListItems open={open} routes={routesSettings} />
         </Drawer>
       )}
-      <Box component="main" sx={{ flexGrow: 300, p: 1 }}>
+      <Box component="main" sx={{ flexGrow: 300, p: 1, height: "100vh" }}>
         <DrawerHeader />
         {children}
       </Box>

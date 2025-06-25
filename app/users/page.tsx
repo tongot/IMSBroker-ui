@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import MainContainer from "../components/MainContainer";
+import MainContainer from "../components/layout/MainContainer";
 import AccountCircleRound from "@mui/icons-material/AccountCircleRounded";
 import { useQuery } from "@tanstack/react-query";
 import MasterTable from "../components/table/MasterTable";

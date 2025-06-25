@@ -13,6 +13,10 @@ interface RenderProps {
   heading: string;
   loading: boolean;
   maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | false;
+  btnLoadingTxt?: string;
+  btnIcon?: React.ReactNode;
+  btnText?: string;
+  btnDisabled?: boolean;
 }
 
 const useFormDialogContainer = () => {
@@ -37,6 +41,10 @@ const useFormDialogContainer = () => {
       heading,
       loading,
       maxWidth,
+      btnLoadingTxt,
+      btnIcon,
+      btnText,
+      btnDisabled = false,
     }: RenderProps) => (
       <Dialog fullWidth maxWidth={maxWidth} open={openDialog}>
         <FormContainer
@@ -46,6 +54,10 @@ const useFormDialogContainer = () => {
           closeFn={onClose ? onClose : close}
           action={handleSubmit((data) => onSubmit({ ...data }))}
           loading={loading}
+          btnIcon={btnIcon}
+          loadingBtnText={btnLoadingTxt}
+          btnText={btnText}
+          disableSubmit={btnDisabled}
         >
           {formContent}
         </FormContainer>

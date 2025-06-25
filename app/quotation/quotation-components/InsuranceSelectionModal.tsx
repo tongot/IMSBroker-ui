@@ -11,12 +11,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import IInsuranceMainType from "@/app/utils/interfaces/lookups/insurance-main-types";
+import { InsuranceMainType } from "@/app/api/ims-client";
 
 
 interface InsuranceSelectionModalProps {
   open: boolean;
-  insTypes: IInsuranceMainType[];
+  insTypes: InsuranceMainType[];
   onClose: () => void;
   onContinue: (type: number, description: string) => void;
 }

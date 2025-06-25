@@ -12,7 +12,7 @@ import {
 import React, { use, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid2";
 import AddCoverStructureForm from "@/app/underwriters/underwriter-components/AddCoverStructureForm";
-import MainContainer from "@/app/components/MainContainer";
+import MainContainer from "@/app/components/layout/MainContainer";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import { useQuery } from "@tanstack/react-query";
 import ICoverStructure from "@/app/utils/interfaces/cover-structure/cover-structure";
@@ -22,7 +22,7 @@ import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import AddCoverStructureFieldForm from "@/app/underwriters/underwriter-components/AddCoverStructureFieldForm";
 import ICoverStructureField from "@/app/utils/interfaces/cover-structure/cover-structure-field";
 import CoverFieldsDisplay from "@/app/underwriters/underwriter-components/CoverFieldsDisplay";
-import CustomTab from "@/app/components/CustomTab";
+import CustomTab from "@/app/components/custom-components/CustomTab";
 import StateMachineView from "@/app/underwriters/underwriter-components/CoverStates";
 import { useStateMachineStore } from "@/app/stores/state-machine-store";
 import AddCoverStateForm from "@/app/underwriters/underwriter-components/AddCoverStateForm";

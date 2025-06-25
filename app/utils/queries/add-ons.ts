@@ -19,3 +19,9 @@ export const useCoverAddonsQuery = (id: number) => {
   });
 };
 
+ export const useAddOnForQuotes = (category: number, canRun:boolean, coverId?:number) => useQuery({
+    enabled: canRun,
+    queryKey: ["Add-ons"],
+    queryFn: () => GET<string[]>(`/quotation/add-ons/${category}${coverId ? "?coverId="+coverId : ""}`), // Function to fetch data
+  });
+

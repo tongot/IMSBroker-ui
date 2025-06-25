@@ -35,7 +35,7 @@ export default function MasterTableHeader(props: EnhancedTableProps) {
 
   return (
     <TableHead>
-      <TableRow sx={{ backgroundColor: "primary.light" }}>
+      <TableRow>
         {canSelectMultiple && (
           <TableCell padding="checkbox">
             <Checkbox
@@ -51,6 +51,7 @@ export default function MasterTableHeader(props: EnhancedTableProps) {
         )}
         {headCells.map((headCell, index) => (
           <TableCell
+            sx={{ fontWeight: "bold", paddingLeft:"16px" }}
             key={index}
             align={headCell.alignment || "left"}
             width={headCell.width}

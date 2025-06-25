@@ -59,7 +59,6 @@ export default function FieldRender({
                         {...field}
                         label={field.name}
                         value={field.value ?? fieldConfig.value}
-                        size="small"
                       >
                         {getOptions(fieldConfig.defaultValue || "")?.map(
                           (option: string) => (
@@ -94,7 +93,6 @@ export default function FieldRender({
                       onChange={(date) => field.onChange(date)}
                       slotProps={{
                         textField: {
-                          size: "small",
                           fullWidth: true,
                           error: !!errors[field.name],
                           helperText: errors[field.name]
@@ -119,7 +117,6 @@ export default function FieldRender({
                       type="number"
                       label={field.name}
                       fullWidth
-                      size="small"
                       defaultValue={fieldConfig.value ?? ""}
                       value={field.value ?? fieldConfig.value}
                       error={!!errors[field.name]}
@@ -142,7 +139,10 @@ export default function FieldRender({
                   render={({ field }) => (
                     <FormControlLabel
                       control={
-                        <Checkbox {...field} checked={field.value ?? fieldConfig.value} />
+                        <Checkbox
+                          {...field}
+                          checked={field.value ?? fieldConfig.value}
+                        />
                       }
                       label={field.name}
                     />
@@ -159,7 +159,10 @@ export default function FieldRender({
                   render={({ field }) => (
                     <FormControlLabel
                       control={
-                        <Checkbox {...field} checked={field.value ?? fieldConfig.value} />
+                        <Checkbox
+                          {...field}
+                          checked={field.value ?? fieldConfig.value}
+                        />
                       }
                       label={field.name}
                     />
@@ -175,7 +178,6 @@ export default function FieldRender({
                   control={control}
                   render={({ field }) => (
                     <TextField
-                      size="small"
                       {...field}
                       type="text"
                       label={field.name}
@@ -202,17 +204,18 @@ export default function FieldRender({
                   control={control}
                   render={({ field }) => (
                     <TextField
-                      size="small"
                       {...field}
                       label={field.name}
                       multiline
                       rows={4}
                       fullWidth
-                      value={fieldConfig.value ?? ""}
+                      value={field.value ?? fieldConfig.value}
                       error={!!errors[field.name]}
                       helperText={
                         errors[field.name]
-                          ? errors[field.name]?.message?.toString()
+                          ? errors[field.name]?.message?.toString() +
+                            " " +
+                            fieldConfig.hint
                           : ""
                       }
                     />

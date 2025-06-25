@@ -2,12 +2,12 @@
 import { Box, Paper, TextField } from "@mui/material";
 import React from "react";
 import AccountCircleRound from "@mui/icons-material/AccountCircleRounded";
-import FormContainer from "@/app/components/FormContainer";
+import FormContainer from "@/app/components/custom-components/FormContainer";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import POST from "@/app/utils/http/POST";
 import IAddUser from "@/app/utils/interfaces/users/add-user";
-import { queryClient } from "@/app/components/Provider";
+import { queryClient } from "@/app/Provider";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import { useRouter } from "next/navigation";
 

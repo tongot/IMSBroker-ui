@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, List, ListItem, ListItemText, TextField, Paper } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import AddOnsInputButton from "@/app/components/shared/AddOnsInputButton";
+import AddOnsInputButton from "@/app/components/shared-button-components/AddOnsInputButton";
 import { useAddonsQuery } from "@/app/utils/queries/add-ons";
 
 

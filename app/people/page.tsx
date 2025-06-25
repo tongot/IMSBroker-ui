@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import MainContainer from "../components/MainContainer";
+import MainContainer from "../components/layout/MainContainer";
 import { useQuery } from "@tanstack/react-query";
 import MasterTable from "../components/table/MasterTable";
-import PersonInputButton from "../components/shared/PersonInputButton";
+import PersonInputButton from "../components/shared-button-components/PersonInputButton";
 import PeopleIcon from '@mui/icons-material/People';
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { GET } from "../utils/http/GET";

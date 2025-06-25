@@ -13,7 +13,7 @@ import {
   Chip,
 } from "@mui/material";
 import { ExpandMore, ExpandLess, CheckCircle } from "@mui/icons-material";
-import LookUpPersonButton from "@/app/components/shared/LookUpPersonButton";
+import LookUpPersonButton from "@/app/components/shared-button-components/LookUpPersonButton";
 import { usePeopleStore } from "@/app/stores/people-store";
 import { QuotationViewDto } from "@/app/api/ims-client";
 import { formatCurrency } from "@/app/utils/common-funcs";

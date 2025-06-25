@@ -1,6 +1,6 @@
 import React from "react";
 import * as MuiIcons from "@mui/icons-material";
-import MatIconProp from "../utils/interfaces/mat-icon-prop";
+import MatIconProp from "../../utils/interfaces/mat-icon-prop";
 
 const DynamicIcon: React.FC<MatIconProp> = ({ icon }) => {
   const IconComponent = MuiIcons[icon];

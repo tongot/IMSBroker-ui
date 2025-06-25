@@ -12,14 +12,14 @@ import Grid from "@mui/material/Grid2";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/http/GET";
 import { useInsTypeStore } from "@/app/stores/lookup-store";
-import LookupTypeButton from "@/app/components/shared/LookupTypeButton";
+import LookupTypeButton from "@/app/components/shared-button-components/LookupTypeButton";
 import ICoverStructureField from "@/app/utils/interfaces/cover-structure/cover-structure-field";
-import IInsuranceMainType from "@/app/utils/interfaces/lookups/insurance-main-types";
 import AddCoverStructureFieldForm from "@/app/underwriters/underwriter-components/AddCoverStructureFieldForm";
+import { InsuranceMainType } from "@/app/api/ims-client";
 
 const FieldTemplates: React.FC = () => {
   const [selectedInsurance, setSelectedInsurance] =
-    useState<IInsuranceMainType | null>(null);
+    useState<InsuranceMainType | null>(null);
   const [fieldSearchString, setFieldSearchString] = useState("");
 
   const getIns = useInsTypeStore((state) => state.getInsTypes);
@@ -28,7 +28,7 @@ const FieldTemplates: React.FC = () => {
 
   const { data, isLoading, refetch } = useQuery({
     enabled: false,
-    queryKey: ["field-template"+selectedInsurance?.id], // Unique key for caching
+    queryKey: ["field-template" + selectedInsurance?.id], // Unique key for caching
     queryFn: () =>
       GET<ICoverStructureField[]>("/template/" + selectedInsurance?.id), // Function to fetch data
   });
@@ -44,7 +44,7 @@ const FieldTemplates: React.FC = () => {
     setFieldSearchString(searchString);
   };
 
-  const handleSelectInsurance = (ins: IInsuranceMainType) => {
+  const handleSelectInsurance = (ins: InsuranceMainType) => {
     setSelectedInsurance(ins);
   };
 
@@ -97,9 +97,13 @@ const FieldTemplates: React.FC = () => {
                   <Typography variant="h6">
                     {selectedInsurance?.name}{" "}
                   </Typography>
-                  {selectedInsurance &&                           
-                  <AddCoverStructureFieldForm isTemplate={true} coverStructureId={selectedInsurance.id} refetchField={refetch}/>
-                }
+                  {selectedInsurance && (
+                    <AddCoverStructureFieldForm
+                      isTemplate={true}
+                      coverStructureId={selectedInsurance.id || 0}
+                      refetchField={refetch}
+                    />
+                  )}
                 </Box>
 
                 {isLoading && <div>Loading...</div>}
@@ -123,8 +127,16 @@ const FieldTemplates: React.FC = () => {
                           key={item.id}
                           sx={{ borderBottom: "1px solid #eee" }}
                         >
-                          <ListItemText primary={item.name} secondary={"Type: "+item.type} />
-                          <AddCoverStructureFieldForm editStructureField={item} isTemplate={true} coverStructureId={selectedInsurance.id} refetchField={refetch}/>
+                          <ListItemText
+                            primary={item.name}
+                            secondary={"Type: " + item.type}
+                          />
+                          <AddCoverStructureFieldForm
+                            editStructureField={item}
+                            isTemplate={true}
+                            coverStructureId={selectedInsurance.id || 0}
+                            refetchField={refetch}
+                          />
                         </ListItem>
                       ))}
                   </List>

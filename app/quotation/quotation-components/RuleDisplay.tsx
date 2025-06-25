@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid2";
 import OverrideRuleForm from "./OverrideRuleForm";
 import { useMutation } from "@tanstack/react-query";
 import POST from "@/app/utils/http/POST";
-import { queryClient } from "@/app/components/Provider";
+import { queryClient } from "@/app/Provider";
 import { toast } from "react-toastify";
 
 interface OperatorChipProps {

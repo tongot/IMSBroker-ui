@@ -11,15 +11,23 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CardActions,
+  Button,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { CreateQuotationRespDto } from "@/app/api/ims-client";
+import { usePeopleStore } from "@/app/stores/people-store";
 
 type Props = {
   data: CreateQuotationRespDto;
+  onIgnoreConflict: (personId: number)=>void;
+  loading:boolean;
 }
 
-const ConflictQuoteConfirm: React.FC<Props> = ({ data }) => {
+const ConflictQuoteConfirm: React.FC<Props> = ({ data, onIgnoreConflict, loading }) => {
+
+  const selectedPerson = usePeopleStore((state) => state.selectedPeople);
+  
   return (
     <Card
       variant="outlined"
@@ -69,7 +77,17 @@ const ConflictQuoteConfirm: React.FC<Props> = ({ data }) => {
               {data.conflictingCreatedBy ?? "N/A"}
             </Typography>
           </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography variant="subtitle2" color="text.secondary">
+              Targeted Customer
+            </Typography>
+            <Typography variant="body1">
+              {(selectedPerson[0]?.firstName ||""+ " "+ selectedPerson[0]?.lastName||"") ?? "N/A"}
+            </Typography>
+          </Grid>
         </Grid>
+        
 
         {data.matchingFieldDtos && data.matchingFieldDtos?.length > 0 && (
           <TableContainer component={Paper} sx={{ mt: 4 }}>
@@ -92,6 +110,9 @@ const ConflictQuoteConfirm: React.FC<Props> = ({ data }) => {
           </TableContainer>
         )}
       </CardContent>
+      <CardActions>
+          <Button onClick={() =>onIgnoreConflict(selectedPerson[0]?.id || 0)} variant="contained" color="error" loading={loading}>Proceed anyway</Button>
+      </CardActions>
     </Card>
   );
 };
